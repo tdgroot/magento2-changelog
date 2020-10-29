@@ -13,3 +13,5 @@ fi
 
 mkdir Magento
 mv out/vendor/magento/* Magento/
+
+php rename-directories.php

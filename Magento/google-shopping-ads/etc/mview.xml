@@ -6,14 +6,14 @@
  */
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Mview/etc/mview.xsd">
-    <view id="scconnector_google_remove" class="\Magento\GoogleShoppingAds\Model\Indexer\RemoveIndexer" group="indexer">
+    <view id="scconnector_google_remove" class="\Magento\Framework\Indexer\Action\Dummy" group="indexer">
         <subscriptions>
             <table name="catalog_product_entity" entity_column="entity_id" />
             <table name="catalog_product_entity_int" entity_column="entity_id" />
             <table name="catalog_product_website" entity_column="product_id" />
         </subscriptions>
     </view>
-    <view id="scconnector_google_feed" class="\Magento\GoogleShoppingAds\Model\Indexer\FeedIndexer" group="indexer">
+    <view id="scconnector_google_feed" class="\Magento\Framework\Indexer\Action\Dummy" group="indexer">
         <subscriptions>
             <table name="catalog_product_entity" entity_column="entity_id" />
             <table name="catalog_product_entity_gallery" entity_column="entity_id" />

@@ -6,10 +6,5 @@
  */
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Module/etc/module.xsd">
-    <module name="Magento_GoogleShoppingAds" setup_version="3.0.1">
-        <sequence>
-            <module name="Magento_Staging"/>
-            <module name="Magento_CatalogStaging"/>
-        </sequence>
-    </module>
+    <module name="Magento_GoogleShoppingAds" setup_version="4.0.1" />
 </config>

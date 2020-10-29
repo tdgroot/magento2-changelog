@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="sales_channels" translate="label" type="text" sortOrder="300" showInDefault="1" showInWebsite="0" showInStore="0">
+            <label>Channels</label>
+            <tab>service</tab>
+            <resource>Magento_GoogleShoppingAds::config_integration</resource>
+            <group id="sales_channel_integration" translate="label" type="text" sortOrder="90" showInDefault="1" showInWebsite="0" showInStore="0">
+                <label>Google Shopping ads Channel</label>
+                <field id="api_key" translate="label comment" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="0">
+                    <label>Api Key</label>
+                    <comment><![CDATA[For the Google Shopping ads Channel to work you need an API Key.
+                    Please go <a href="https://account.magento.com/customer/account/login" target="_blank">here</a> to get one.
+                    Once created, copy and paste the key above and select "save".]]></comment>
+                </field>
+                <field id="unique_id" translate="label comment" type="text" sortOrder="20" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+                    <label>Unique ID</label>
+                    <comment>An unique ID of your magento instance.</comment>
+                </field>
+                <field id="enable_service_logs" translate="label comment" type="select" sortOrder="30" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+                    <label>Enable Service Logs</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

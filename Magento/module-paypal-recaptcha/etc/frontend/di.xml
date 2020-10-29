@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+
+    <type name="Magento\Checkout\Block\Onepage">
+        <arguments>
+            <argument name="layoutProcessors" xsi:type="array">
+                <item name="msp_paypal_recaptcha" xsi:type="object">\Magento\PaypalReCaptcha\Block\LayoutProcessor\Checkout\Onepage</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <type name="MSP\ReCaptcha\Model\LayoutSettings">
+        <plugin name="msp_layout_settings" type="Magento\PaypalReCaptcha\Plugin\LayoutSettings" />
+    </type>
+
+    <!-- PayPal PayflowPro Form -->
+    <virtualType name="Magento\PaypalReCaptcha\Model\Provider\IsCheckRequired\Frontend\PayPal"
+                 type="MSP\ReCaptcha\Model\IsCheckRequired">
+        <arguments>
+            <argument name="enableConfigFlag"
+                      xsi:type="string">msp_securitysuite_recaptcha/frontend/enabled_paypal</argument>
+            <argument name="area" xsi:type="string">frontend</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Magento\PaypalReCaptcha\Observer\Frontend\PayPalObserver"
+                 type="MSP\ReCaptcha\Observer\ReCaptchaObserver">
+        <arguments>
+            <argument name="isCheckRequired"
+                      xsi:type="object">Magento\PaypalReCaptcha\Model\Provider\IsCheckRequired\Frontend\PayPal</argument>
+            <argument name="failureProvider"
+                      xsi:type="object">Magento\PaypalReCaptcha\Model\Provider\Failure\PaypalResponseFailure</argument>
+        </arguments>
+    </virtualType>
+
+    <type name="Magento\Checkout\Model\CompositeConfigProvider">
+        <arguments>
+            <argument name="configProviders" xsi:type="array">
+                <item name="msp_recaptcha_config_provider" xsi:type="object">Magento\PaypalReCaptcha\Model\CheckoutConfigProvider</item>
+            </argument>
+        </arguments>
+    </type>
+</config>

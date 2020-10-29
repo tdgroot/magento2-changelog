@@ -1,0 +1,46 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// @codingStandardsIgnoreFile
+
+?>
+<script src="<?= $block->escapeUrl($block->getConfig()->getFrontendUrl()); ?>/loader.js"></script>
+<div id="google_app"></div>
+<div id="modal_root"></div>
+<script>
+    window.googleAppConfig = {
+        configs: {websiteChannels: {}},
+        magentoMiddlewareUrl: '<?= $block->escapeUrl($block->getUrl('scconnector/index/middleware')); ?>',
+        magentoGatewayUrl: '<?= $block->escapeUrl($block->getUrl('scconnector/index/magentoGatewayCallback')); ?>',
+        googleUrl: '<?= $block->escapeUrl($block->getUrl('scconnector/index/googleCallback')); ?>',
+        productEditUrl: '<?= $block->escapeUrl($block->getUrl('scconnector/index/productEditUrl')); ?>',
+        createAttributeUrl: '<?= $block->escapeUrl($block->getUrl('scconnector/index/createAttribute')); ?>',
+        invalidateIndexesUrl: '<?= $block->escapeUrl($block->getUrl('scconnector/index/invalidateIndexes')); ?>',
+        sessionRenewUrl: '<?= $block->escapeUrl($block->getUrl('admin/index/index')); ?>',
+        biEssentialsUrl: '<?= $block->escapeUrl($block->getUrl('analytics/biessentials/signup')); ?>',
+        keySettingsUrl: '<?= $block->escapeUrl($block->getUrl(
+            'adminhtml/system_config/edit',
+            [
+                'section' => 'sales_channels'
+            ]
+        )); ?>',
+        keyIsValid: <?= /* @noEscape */ $block->getKey()->isKeyValid(); ?>,
+        sessionLifetime: <?= $block->escapeJs($block->getConfig()->getAdminSessionLifetime()); ?>,
+        attributes: <?= /* @noEscape */ $block->getAttributes()->getData(); ?>,
+        websites: <?= /* @noEscape */ $block->getWebsites()->getData(); ?>,
+        categories: <?= /* @noEscape */ $block->getCategories()->getData(); ?>,
+        brands: <?= /* @noEscape */ $block->getBrands()->getData(); ?>,
+        key: '<?= $block->escapeJs($block->getKey()->getData()); ?>',
+        metadata: {
+            version: '<?= $block->escapeJs($block->getProductMetadata()->getVersion()); ?>',
+            edition: '<?= $block->escapeJs($block->getProductMetadata()->getEdition()); ?>',
+            moduleVersion: '<?= $block->escapeJs($block->getProductMetadata()->getModuleVersion()); ?>'
+        }
+    };
+    window.addEventListener('load', function(){
+        window.startGoogleReactAppLoading('<?= $block->escapeUrl($block->getConfig()->getFrontendUrl()); ?>');
+    });
+</script>

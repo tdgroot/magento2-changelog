@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<!--@todo think of this settings before release-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Cron:etc/crontab.xsd">
+    <group id="scconnector">
+        <job name="scconnector_verify_website" instance="Magento\GoogleShoppingAds\Cron\SiteVerification" method="execute">
+            <schedule>*/10 * * * *</schedule>
+        </job>
+        <job name="scconnector_retrieve_gtag" instance="Magento\GoogleShoppingAds\Cron\GTagRetriever" method="execute">
+            <schedule>*/10 * * * *</schedule>
+        </job>
+    </group>
+</config>

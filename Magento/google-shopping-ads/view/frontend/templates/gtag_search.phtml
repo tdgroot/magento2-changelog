@@ -1,0 +1,19 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// @codingStandardsIgnoreFile
+
+?>
+<!-- BEGIN GTAG SEARCH TAG -->
+<?php if ($block->getGtagConfig()->getId()): ?>
+    <script>
+        gtag('event', 'search', {
+            'ecomm_pagetype': 'searchresults',
+            'ecomm_prodid': <?= /* @noEscape */ $block->getProductList()->getSkuList($block->getLayout()->getBlock('search_result_list')); ?>
+        });
+    </script>
+<?php endif; ?>
+<!-- END GTAG SEARCH TAG -->

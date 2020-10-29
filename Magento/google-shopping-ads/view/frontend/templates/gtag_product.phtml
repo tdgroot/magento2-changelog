@@ -1,0 +1,36 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// @codingStandardsIgnoreFile
+
+?>
+<!-- BEGIN GTAG PRODUCT TAG -->
+<?php if ($block->getGtagConfig()->getId()): ?>
+    <?php
+    /** @var \Magento\Catalog\Model\Product $product */
+    $product = $block->getCurrentProduct()->getCurrentProduct();
+    ?>
+    <script>
+        gtag('event', 'view_item', {
+            'ecomm_prodid': '<?= /* @noEscape */ $block->getJsEscaper()->escapeValue($block->getProductList()->getProductSku($product)); ?>',
+            'ecomm_pagetype': 'product',
+            'ecomm_category': '<?= /* @noEscape */ $block->getJsEscaper()->escapeValue($block->getCurrentProduct()->getCurrentCategoryName()); ?>'
+        });
+    </script>
+    <?php if ($product->getTypeId() == \Magento\ConfigurableProduct\Model\Product\Type\Configurable::TYPE_CODE): ?>
+        <script type="text/x-magento-init">
+        {
+            "*": {
+                "Magento_GoogleShoppingAds/js/gtag-configurable": {
+                    "skuToOptions": <?= /* @noEscape */ $block->getCurrentProduct()->getConfigurableProductOptions(); ?>,
+                    "category": "<?= /* @noEscape */ $block->getJsEscaper()->escapeValue($block->getCurrentProduct()->getCurrentCategoryName()); ?>"
+                }
+            }
+        }
+        </script>
+    <?php endif; ?>
+<?php endif; ?>
+<!-- END GTAG PRODUCT TAG -->

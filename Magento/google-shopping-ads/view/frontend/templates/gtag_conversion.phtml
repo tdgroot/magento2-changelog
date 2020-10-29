@@ -1,0 +1,25 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// @codingStandardsIgnoreFile
+
+?>
+<!-- BEGIN GTAG CONVERSION TAG -->
+<?php if ($conversion = $block->getGtagConfig()->getConversion()): ?>
+    <?php
+    /** @var \Magento\Sales\Model\Order $order */
+    $order = $block->getLastOrder()->getOrder();
+    ?>
+    <script>
+        gtag('event', 'purchase', {
+            'send_to': '<?= /* @noEscape */ $block->getJsEscaper()->escapeValue($conversion); ?>',
+            'value': <?= /* @noEscape */ $block->getJsEscaper()->escapeValue($order->getGrandTotal()) ?>,
+            'currency': '<?= /* @noEscape */ $block->getJsEscaper()->escapeValue($order->getOrderCurrencyCode()) ?>',
+            'transaction_id': '<?= /* @noEscape */ $block->getJsEscaper()->escapeValue($order->getIncrementId()) ?>'
+        });
+    </script>
+<?php endif; ?>
+<!-- END GTAG CONVERSION TAG -->

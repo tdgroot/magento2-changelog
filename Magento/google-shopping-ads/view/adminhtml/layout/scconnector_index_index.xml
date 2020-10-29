@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd" layout="admin-1column" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <body>
+        <referenceContainer name="content">
+            <block name="connect_to_google" template="Magento_GoogleShoppingAds::index.phtml" class="Magento\Framework\View\Element\Template">
+                <arguments>
+                    <argument name="attributes" xsi:type="object">\Magento\GoogleShoppingAds\ViewModel\Adminhtml\Attributes</argument>
+                    <argument name="categories" xsi:type="object">\Magento\GoogleShoppingAds\ViewModel\Adminhtml\Categories</argument>
+                    <argument name="brands" xsi:type="object">\Magento\GoogleShoppingAds\ViewModel\Adminhtml\Brands</argument>
+                    <argument name="websites" xsi:type="object">\Magento\GoogleShoppingAds\ViewModel\Adminhtml\Websites</argument>
+                    <argument name="key" xsi:type="object">\Magento\GoogleShoppingAds\ViewModel\Adminhtml\Key</argument>
+                    <argument name="product_metadata" xsi:type="object">\Magento\GoogleShoppingAds\ViewModel\Adminhtml\ProductMetadata</argument>
+                    <argument name="config" xsi:type="object">\Magento\GoogleShoppingAds\ViewModel\Adminhtml\Config</argument>
+                    <argument name="js_escaper" xsi:type="object">Magento\GoogleShoppingAds\ViewModel\JsEscaper</argument>
+                </arguments>
+            </block>
+        </referenceContainer>
+    </body>
+</page>

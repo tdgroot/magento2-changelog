@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <sales_channels>
+            <sales_channel_integration>
+                <gateway_url>https://api.magento.com/</gateway_url>
+                <service_path>saleschannel</service_path>
+                <gateway_path>gateway</gateway_path>
+                <frontend_url>https://channels.magento.com</frontend_url>
+                <bypass_key_check>0</bypass_key_check>
+                <additional_headers>{}</additional_headers>
+                <enable_service_logs>0</enable_service_logs>
+            </sales_channel_integration>
+        </sales_channels>
+    </default>
+</config>

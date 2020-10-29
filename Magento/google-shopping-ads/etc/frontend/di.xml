@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\Checkout\Controller\Cart\Add">
+        <plugin name="scconnector_cart_add" type="\Magento\GoogleShoppingAds\Plugin\AddProductToCart" />
+    </type>
+    <type name="Magento\Checkout\Controller\Cart\Delete">
+        <plugin name="scconnector_cart_remove" type="\Magento\GoogleShoppingAds\Plugin\DeleteProductFromShoppingCart" />
+    </type>
+    <type name="Magento\Checkout\Controller\Sidebar\RemoveItem">
+        <plugin name="scconnector_cart_remove" type="\Magento\GoogleShoppingAds\Plugin\DeleteProductFromSidebar" />
+    </type>
+    <type name="Magento\Checkout\Controller\Cart\UpdatePost">
+        <plugin name="scconnector_cart_items_update" type="\Magento\GoogleShoppingAds\Plugin\UpdateScopeOfItemsQty" />
+    </type>
+    <type name="Magento\Checkout\Controller\Sidebar\UpdateItemQty">
+        <plugin name="scconnector_sidebar_item_update" type="\Magento\GoogleShoppingAds\Plugin\UpdateOneItemQty" />
+    </type>
+</config>

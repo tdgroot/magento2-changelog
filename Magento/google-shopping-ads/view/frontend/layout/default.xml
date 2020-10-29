@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceContainer name="head.additional">
+            <block class="Magento\Framework\View\Element\Template" name="google.verification" template="Magento_GoogleShoppingAds::verification.phtml">
+                <arguments>
+                    <argument name="verification" xsi:type="object">Magento\GoogleShoppingAds\ViewModel\Verification</argument>
+                </arguments>
+            </block>
+            <block class="Magento\Framework\View\Element\Template" name="google.gtag.global" template="Magento_GoogleShoppingAds::gtag_global.phtml">
+                <arguments>
+                    <argument name="gtag_config" xsi:type="object">Magento\GoogleShoppingAds\ViewModel\GtagConfig</argument>
+                </arguments>
+            </block>
+        </referenceContainer>
+        <referenceContainer name="after.body.start">
+            <block class="Magento\Framework\View\Element\Template"
+                   template="Magento_GoogleShoppingAds::gtag_cart.phtml" name="google.gtag.cart">
+                <arguments>
+                    <argument name="gtag_config" xsi:type="object">Magento\GoogleShoppingAds\ViewModel\GtagConfig</argument>
+                </arguments>
+            </block>
+        </referenceContainer>
+    </body>
+</page>

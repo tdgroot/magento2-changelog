@@ -1,0 +1,20 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// @codingStandardsIgnoreFile
+
+?>
+<!-- BEGIN GTAG CATEGORY TAG -->
+<?php if ($block->getGtagConfig()->getId()): ?>
+    <script>
+        gtag('event', 'view_item_list', {
+            'ecomm_pagetype': 'category',
+            'ecomm_category': '<?= /* @noEscape */ $block->getJsEscaper()->escapeValue($block->getCurrentProduct()->getCurrentCategoryName()); ?>',
+            'ecomm_prodid': <?= /* @noEscape */ $block->getProductList()->getSkuList($block->getLayout()->getBlock('category.products.list')); ?>
+        });
+    </script>
+<?php endif; ?>
+<!-- END GTAG CATEGORY TAG -->

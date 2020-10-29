@@ -1,0 +1,23 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// @codingStandardsIgnoreFile
+/** @var \Magento\GoogleTagManager\Block\ListJson $block */
+?>
+<!-- BEGIN GTAG CART SCRIPT -->
+<?php if ($id = $block->getGtagConfig()->getId()): ?>
+    <script type="text/x-magento-init">
+    {
+        "*": {
+            "Magento_GoogleShoppingAds/js/gtag-cart": {
+                "cookieAddToCart": "<?= /* @NoEscape */ \Magento\GoogleShoppingAds\Model\GtagQuoteItemsHandler::REGISTRY_NAMESPACE_ADD_TO_CART ?>",
+                "cookieRemoveFromCart": "<?= /* @NoEscape */ \Magento\GoogleShoppingAds\Model\GtagQuoteItemsHandler::REGISTRY_NAMESPACE_REMOVE_FROM_CART ?>"
+            }
+        }
+    }
+</script>
+<?php endif; ?>
+<!-- END GTAG CART SCRIPT -->

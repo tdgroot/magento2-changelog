@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Indexer/etc/indexer.xsd">
+    <indexer id="scconnector_google_remove" view_id="scconnector_google_remove" class="\Magento\GoogleShoppingAds\Model\Indexer\RemoveIndexer">
+        <title translate="true">Google Product Removal Feed</title>
+        <description translate="true">Removes products from Google Merchant Center</description>
+    </indexer>
+    <indexer id="scconnector_google_feed" view_id="scconnector_google_feed" class="\Magento\GoogleShoppingAds\Model\Indexer\FeedIndexer">
+        <title translate="true">Google Product Feed</title>
+        <description translate="true">Sends product data to Google Merchant Center</description>
+    </indexer>
+</config>

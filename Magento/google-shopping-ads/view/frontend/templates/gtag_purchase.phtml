@@ -1,0 +1,24 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// @codingStandardsIgnoreFile
+
+?>
+<!-- BEGIN GTAG PURCHASE TAG -->
+<?php if ($block->getGtagConfig()->getId()): ?>
+    <?php
+    /** @var \Magento\Sales\Model\Order $order */
+    $order = $block->getLastOrder()->getOrder();
+    ?>
+    <script>
+        gtag('event', 'purchase', {
+            'ecomm_pagetype': 'purchase',
+            'ecomm_totalvalue': <?= /* @noEscape */ $block->getJsEscaper()->escapeValue($order->getGrandTotal()) ?>,
+            'ecomm_prodid': <?= /* @noEscape */ $block->getLastOrder()->getOrderItemSkus() ?>
+        });
+    </script>
+<?php endif; ?>
+<!-- END GTAG PURCHASE TAG -->

@@ -1,0 +1,56 @@
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<div class="masonry-image-preview" if="$col.isVisible($row())" data-image-preview ko-style="$col.getStyles()">
+    <div class="container">
+        <div class="action-buttons preview-buttons">
+            <button class="action-previous" type="button" disable="$col.cannotViewPrevious($row())" click="$col.prev.bind($col, $row())">
+                <span translate="'Previous'"/>
+            </button>
+            <button class="action-next" type="button" disable="$col.cannotViewNext($row())" click="$col.next.bind($col, $row())">
+                <span translate="'Next'"/>
+            </button>
+            <button class="action-close" type="button" click="$col.hide.bind($col)">
+                <span translate="'Close'"/>
+            </button>
+        </div>
+
+        <div class="preview-row-content">
+            <img class="preview" attr="src: $col.displayedRecord().thumbnail_500_url, alt: $col.displayedRecord().title">
+            <div class="info">
+                <h3 class="title" text="$col.displayedRecord().title" if="$col.displayedRecord().title"/>
+                <div class="author" if="$col.displayedRecord().creator_name">
+                    <span translate="'By'" /><span text="' ' + $col.displayedRecord().creator_name" />
+                </div>
+
+                <div class="actions">
+                    <!-- ko scope: actions -->
+                        <!-- ko template: getTemplate() --><!-- /ko -->
+                    <!-- /ko -->
+                </div>
+            </div>
+        </div>
+
+        <div class="attributes" data-role="image-attributes-value">
+            <!-- ko foreach: $col.getDisplayAttributes() -->
+            <div class="attribute">
+                <span class="title" translate="name"/>
+                <div class="value">
+                    <span text="value" />
+                </div>
+            </div>
+            <!-- /ko -->
+        </div>
+
+        <!-- ko scope: related -->
+            <!-- ko template: getTemplate() --><!-- /ko -->
+        <!-- /ko -->
+
+        <div class="keywords-container" ko-scope="keywords">
+            <!-- ko template: getTemplate() --><!-- /ko -->
+        </div>
+    </div>
+</div>

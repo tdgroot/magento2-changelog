@@ -1,0 +1,111 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\GoogleShoppingAds\Cron\SiteVerification">
+        <arguments>
+            <argument name="relatedCacheTypes" xsi:type="array">
+                <item name="blockCache" xsi:type="string">block_html</item>
+                <item name="configCache" xsi:type="string">config</item>
+                <item name="fullPageCache" xsi:type="string">full_page</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\GoogleShoppingAds\Cron\GTagRetriever">
+        <arguments>
+            <argument name="relatedCacheTypes" xsi:type="array">
+                <item name="blockCache" xsi:type="string">block_html</item>
+                <item name="configCache" xsi:type="string">config</item>
+                <item name="fullPageCache" xsi:type="string">full_page</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\GoogleShoppingAds\Setup\UpgradeData">
+        <arguments>
+            <argument name="indexerIds" xsi:type="array">
+                <item name="scconnector_google_remove" xsi:type="string">scconnector_google_remove</item>
+                <item name="scconnector_google_feed" xsi:type="string">scconnector_google_feed</item>
+            </argument>
+        </arguments>
+    </type>
+    <virtualType name="UrlFactoryForGoogleShoppingAdsAdditionalAttributes" type="\Magento\Framework\UrlFactory">
+        <arguments>
+            <argument name="instanceName" xsi:type="string">\Magento\Framework\Url</argument>
+        </arguments>
+    </virtualType>
+    <type name="\Magento\GoogleShoppingAds\Model\Indexer\PayloadGenerator\Attribute\AdditionalAttributes">
+        <arguments>
+            <argument name="urlFactory" xsi:type="object">UrlFactoryForGoogleShoppingAdsAdditionalAttributes</argument>
+        </arguments>
+    </type>
+    <type name="\Magento\GoogleShoppingAds\Model\Indexer\FeedIndexer">
+        <arguments>
+            <argument name="productRetrievers" xsi:type="array">
+                <item name="default" xsi:type="object">Magento\GoogleShoppingAds\Model\ProductRetriever</item>
+                <item name="configurable" xsi:type="object">\Magento\GoogleShoppingAds\Model\ConfigurableProductRetriever</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="\Magento\GoogleShoppingAds\Model\Indexer\FeedSender">
+        <arguments>
+            <argument name="payloadGenerators" xsi:type="array">
+                <item name="attributes" xsi:type="object">\Magento\GoogleShoppingAds\Model\Indexer\PayloadGenerator\Attribute</item>
+                <item name="price" xsi:type="object">\Magento\GoogleShoppingAds\Model\Indexer\PayloadGenerator\Price</item>
+                <item name="inventory" xsi:type="object">\Magento\GoogleShoppingAds\Model\Indexer\PayloadGenerator\Inventory</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="\Magento\GoogleShoppingAds\Model\Indexer\PayloadGenerator\Inventory\InventoryGeneratorFactory">
+        <arguments>
+            <argument name="inventoryPool" xsi:type="array">
+                <item name="msi" xsi:type="string">Magento\GoogleShoppingAds\Model\Indexer\PayloadGenerator\Inventory\MultiSourceInventory</item>
+                <item name="catalog_inventory" xsi:type="string">Magento\GoogleShoppingAds\Model\Indexer\PayloadGenerator\Inventory\CatalogInventory</item>
+            </argument>
+        </arguments>
+    </type>
+    <!--Plugins-->
+    <type name="\Magento\Catalog\Model\Indexer\Product\Eav">
+        <plugin name="bindRemoveIndexer" type="\Magento\GoogleShoppingAds\Plugin\Catalog\Model\Indexer\Product\Eav\BindRemoveIndexer" />
+        <plugin name="bindAttributeIndexer" type="\Magento\GoogleShoppingAds\Plugin\Catalog\Model\Indexer\Product\Eav\BindAttributeIndexer" />
+    </type>
+    <type name="\Magento\Catalog\Controller\Adminhtml\Product\Action\Attribute\Save">
+        <plugin name="bindAttributeIndexerMassUpdate" type="\Magento\GoogleShoppingAds\Plugin\Catalog\Controller\Adminhtml\Product\Action\Attribute\Save\BindAttributeIndexer" />
+    </type>
+    <type name="\Magento\Catalog\Controller\Adminhtml\Product\MassDelete">
+        <plugin name="bindRemoveIndexerMassDelete" type="\Magento\GoogleShoppingAds\Plugin\Catalog\Controller\Adminhtml\Product\MassDelete\BindRemoveIndexer" />
+    </type>
+    <type name="\Magento\Catalog\Controller\Adminhtml\Product\MassStatus">
+        <plugin name="bindIndexersMassStatus" type="\Magento\GoogleShoppingAds\Plugin\Catalog\Controller\Adminhtml\Product\MassStatus\BindIndexers" />
+    </type>
+    <type name="\Magento\Catalog\Model\Indexer\Product\Price">
+        <plugin name="bindPriceIndexer" type="\Magento\GoogleShoppingAds\Plugin\Catalog\Model\Indexer\Product\Price\BindPriceIndexer" />
+    </type>
+    <type name="\Magento\CatalogInventory\Model\Indexer\Stock">
+        <plugin name="bindInventoryIndexer" type="\Magento\GoogleShoppingAds\Plugin\CatalogInventory\Model\Indexer\Stock\BindInventoryIndexer" />
+    </type>
+    <type name="\Magento\GoogleShoppingAds\Model\Indexer\PayloadGenerator\Attribute">
+        <arguments>
+            <argument name="additionalAttributes" xsi:type="array">
+                <item name="attributes" xsi:type="object">\Magento\GoogleShoppingAds\Model\Indexer\PayloadGenerator\Attribute\AdditionalAttributes</item>
+                <item name="configurable" xsi:type="object">\Magento\GoogleShoppingAds\Model\Indexer\PayloadGenerator\Attribute\ConfigurableAttributes</item>
+                <item name="bundle" xsi:type="object">\Magento\GoogleShoppingAds\Model\Indexer\PayloadGenerator\Attribute\BundleAttributes</item>
+            </argument>
+        </arguments>
+    </type>
+    <virtualType name="\Magento\GoogleShoppingAds\Model\Logger\Indexer" type="Magento\Framework\Logger\Monolog">
+        <arguments>
+            <argument name="handlers"  xsi:type="array">
+                <item name="debug" xsi:type="object">\Magento\GoogleShoppingAds\Model\Logger\Handler\Indexer</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <type name="\Magento\GoogleShoppingAds\Model\Indexer\FeedSender">
+        <arguments>
+            <argument name="logger" xsi:type="object">\Magento\GoogleShoppingAds\Model\Logger\Indexer</argument>
+        </arguments>
+    </type>
+</config>

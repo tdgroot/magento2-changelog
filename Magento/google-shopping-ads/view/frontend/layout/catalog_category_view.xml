@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceContainer name="before.body.end">
+            <block class="Magento\Framework\View\Element\Template" name="google.gtag.category" template="Magento_GoogleShoppingAds::gtag_category.phtml">
+                <arguments>
+                    <argument name="gtag_config" xsi:type="object">Magento\GoogleShoppingAds\ViewModel\GtagConfig</argument>
+                    <argument name="product_list" xsi:type="object">Magento\GoogleShoppingAds\ViewModel\ProductList</argument>
+                    <argument name="current_product" xsi:type="object">Magento\GoogleShoppingAds\ViewModel\CurrentProduct</argument>
+                    <argument name="js_escaper" xsi:type="object">Magento\GoogleShoppingAds\ViewModel\JsEscaper</argument>
+                </arguments>
+            </block>
+        </referenceContainer>
+    </body>
+</page>

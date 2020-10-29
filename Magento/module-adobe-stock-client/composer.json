@@ -1,0 +1,25 @@
+{
+    "name": "magento/module-adobe-stock-client",
+    "description": "Magento module responsible for interaction with Adobe Stock API implementation",
+    "require": {
+        "php": "~7.1.3||~7.2.0||~7.3.0",
+        "magento/framework": "~102.0.4",
+        "magento/module-adobe-ims-api": "1.*.*",
+        "magento/module-adobe-stock-client-api": "1.*.*",
+        "astock/stock-api-libphp": "^1.1.2"
+    },
+    "type": "magento2-module",
+    "license": [
+        "OSL-3.0",
+        "AFL-3.0"
+    ],
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "Magento\\AdobeStockClient\\": ""
+        }
+    },
+    "version": "1.0.0"
+}

@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="Magento\AdobeStockAssetApi\Api\Data\AssetInterface" type="Magento\AdobeStockAsset\Model\Asset"/>
+    <preference for="Magento\AdobeStockAssetApi\Api\AssetRepositoryInterface" type="Magento\AdobeStockAsset\Model\AssetRepository"/>
+    <preference for="Magento\AdobeStockAssetApi\Api\Data\AssetSearchResultsInterface" type="Magento\AdobeStockAsset\Model\SearchResults"/>
+
+    <preference for="Magento\AdobeStockAssetApi\Api\Data\CategoryInterface" type="Magento\AdobeStockAsset\Model\Category"/>
+    <preference for="Magento\AdobeStockAssetApi\Api\CategoryRepositoryInterface" type="Magento\AdobeStockAsset\Model\CategoryRepository"/>
+    <preference for="Magento\AdobeStockAssetApi\Api\Data\CategorySearchResultsInterface" type="Magento\AdobeStockAsset\Model\CategorySearchResults"/>
+
+    <preference for="Magento\AdobeStockAssetApi\Api\Data\CreatorInterface" type="Magento\AdobeStockAsset\Model\Creator"/>
+    <preference for="Magento\AdobeStockAssetApi\Api\CreatorRepositoryInterface" type="Magento\AdobeStockAsset\Model\CreatorRepository"/>
+    <preference for="Magento\AdobeStockAssetApi\Api\Data\CreatorSearchResultsInterface" type="Magento\AdobeStockAsset\Model\CreatorSearchResults"/>
+
+    <preference for="Magento\AdobeStockAssetApi\Api\GetAssetListInterface" type="Magento\AdobeStockAsset\Model\GetAssetList"/>
+    <preference for="Magento\AdobeStockAssetApi\Api\SaveAssetInterface" type="Magento\AdobeStockAsset\Model\SaveAsset"/>
+    <preference for="Magento\AdobeStockAssetApi\Api\GetAssetByIdInterface" type="Magento\AdobeStockAsset\Model\GetAssetById"/>
+
+    <type name="Magento\Config\Model\Config\TypePool">
+        <arguments>
+            <argument name="sensitive" xsi:type="array">
+                <item name="adobe_ims/integration/api_key" xsi:type="string">1</item>
+                <item name="adobe_ims/integration/private_key" xsi:type="string">1</item>
+            </argument>
+        </arguments>
+    </type>
+</config>

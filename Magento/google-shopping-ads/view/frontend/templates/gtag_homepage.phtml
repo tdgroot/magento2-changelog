@@ -1,0 +1,18 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// @codingStandardsIgnoreFile
+
+?>
+<!-- BEGIN GTAG HOMEPAGE TAG -->
+<?php if ($block->getGtagConfig()->getId()): ?>
+    <script>
+        gtag('event', 'page_view', {
+            'ecomm_pagetype': 'home'
+        });
+    </script>
+<?php endif; ?>
+<!-- END GTAG HOMEPAGE TAG -->

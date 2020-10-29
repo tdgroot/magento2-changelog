@@ -20,3 +20,5 @@ git commit -m "Add Magento 2.x.x"
 ## Rationale
 
 Although Magento Open Source is, well, open source, the release process is not as open source as one would think. The release process happens at Magento HQ and the only outcome we (the community) get is a release tag in the Magento repository with thousands of commits between the new and previous tag.
+
+In the olden Magento 1 days, it was possible to see what had changed in an update. That was due to the fact that all the vendor code was being checked in to Git. There were also community initiatives like [OpenMage/magento-mirror](https://github.com/OpenMage/magento-mirror) to make the changes available on Github.

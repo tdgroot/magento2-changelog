@@ -16,7 +16,6 @@ use Magento\Framework\Filesystem;
 use Magento\Framework\Filesystem\Driver\Https;
 use Magento\Framework\Filesystem\DriverInterface;
 use Magento\MediaGalleryApi\Api\IsPathExcludedInterface;
-use Magento\Cms\Model\Wysiwyg\Images\Storage;
 
 /**
  * Save images to the file system
@@ -41,26 +40,18 @@ class Save
     private $isPathExcluded;
 
     /**
-     * @var Storage
-     */
-    private $storage;
-
-    /**
      * @param Filesystem $filesystem
      * @param Https $driver
      * @param IsPathExcludedInterface $isPathExcluded
-     * @param Storage $storage
      */
     public function __construct(
         Filesystem $filesystem,
         Https $driver,
-        IsPathExcludedInterface $isPathExcluded,
-        Storage $storage
+        IsPathExcludedInterface $isPathExcluded
     ) {
         $this->filesystem = $filesystem;
         $this->driver = $driver;
         $this->isPathExcluded = $isPathExcluded;
-        $this->storage = $storage;
     }
 
     /**
@@ -68,11 +59,12 @@ class Save
      *
      * @param string $imageUrl
      * @param string $destinationPath
+     * @param bool $allowOverwrite
      * @throws AlreadyExistsException
      * @throws FileSystemException
      * @throws LocalizedException
      */
-    public function execute(string $imageUrl, string $destinationPath): void
+    public function execute(string $imageUrl, string $destinationPath, bool $allowOverwrite = false): void
     {
         $mediaDirectory = $this->filesystem->getDirectoryWrite(DirectoryList::MEDIA);
 
@@ -84,13 +76,12 @@ class Save
             throw new LocalizedException(__('Could not save image: unsupported file type.'));
         }
 
-        if ($mediaDirectory->isExist($destinationPath)) {
+        if (!$allowOverwrite && $mediaDirectory->isExist($destinationPath)) {
             throw new AlreadyExistsException(__('Image with the same file name already exits.'));
         }
 
         $fileContents = $this->driver->fileGetContents($this->getUrlWithoutProtocol($imageUrl));
         $mediaDirectory->writeFile($destinationPath, $fileContents);
-        $this->storage->resizeFile($mediaDirectory->getAbsolutePath($destinationPath));
     }
 
     /**

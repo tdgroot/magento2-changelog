@@ -67,6 +67,7 @@ $formData = $block->getFormData();
         <?php if ($_gender->isEnabled()): ?>
             <?= $_gender->setGender($formData->getGender())->toHtml() ?>
         <?php endif ?>
+        <?= $block->getChildHtml('fieldset_create_info_additional') ?>
     </fieldset>
     <?php if ($block->getShowAddressFields()): ?>
         <?php $cityValidationClass = $addressHelper->getAttributeValidationClass('city'); ?>
@@ -258,8 +259,12 @@ $formData = $block->getFormData();
                        autocomplete="off">
             </div>
         </div>
+    </fieldset>
+
+    <fieldset class="fieldset additional_info">
         <?= $block->getChildHtml('form_additional_info') ?>
     </fieldset>
+
     <div class="actions-toolbar">
         <div class="primary">
             <button type="submit"
@@ -311,13 +316,6 @@ script;
 endif;
 $scriptString .= <<<script
     }).find('input:text').attr('autocomplete', 'off');
-    dataForm.submit(function () {
-        $(this).find(':submit').attr('disabled', 'disabled');
-    });
-    dataForm.bind("invalid-form.validate", function () {
-        $(this).find(':submit').prop('disabled', false);
-    });
-
 });
 script;
 ?>
@@ -351,6 +349,11 @@ script;
         ".field.password": {
             "passwordStrengthIndicator": {
                 "formSelector": "form.form-create-account"
+            }
+        },
+        "*": {
+            "Magento_Customer/js/block-submit-on-send": {
+                "formId": "form-validate"
             }
         }
     }

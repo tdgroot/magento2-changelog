@@ -3,11 +3,12 @@
  * See COPYING.txt for license details.
  */
 define([
-    'jquery'
-], function ($) {
+    'jquery',
+    'mage/translate'
+], function ($, $t) {
     'use strict';
 
-    return function (imageDetailsUrl, imageId) {
+    return function (imageDetailsUrl, imageIds) {
         var deferred = $.Deferred(),
             message;
 
@@ -17,7 +18,7 @@ define([
             dataType: 'json',
             showLoader: true,
             data: {
-                'id': imageId
+                'ids': imageIds
             },
             context: this,
 
@@ -46,7 +47,7 @@ define([
                 if (typeof response.responseJSON === 'undefined' ||
                     typeof response.responseJSON.message === 'undefined'
                 ) {
-                    message = $.mage.__('Could not retrieve image details.');
+                    message = $t('Could not retrieve image details.');
                 } else {
                     message = response.responseJSON.message;
                 }

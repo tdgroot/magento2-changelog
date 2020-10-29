@@ -14,20 +14,12 @@
     </settings>
     <listingToolbar name="listing_top">
         <filters name="listing_filters">
-            <filterSelect name="is_licensed" provider="${ $.parentName }" sortOrder="50">
+            <filterSelect name="is_licensed" provider="${ $.parentName }" sortOrder="40">
                 <settings>
                     <caption translate="true">All</caption>
                     <options class="Magento\AdobeStockImageAdminUi\Ui\Component\Listing\Columns\Licensed\Options"/>
                     <label translate="true">License Status</label>
                     <dataScope>is_licensed</dataScope>
-                </settings>
-            </filterSelect>
-            <filterSelect name="source" provider="${ $.parentName }" sortOrder="60">
-                <settings>
-                    <caption translate="true">All</caption>
-                    <options class="Magento\AdobeStockImageAdminUi\Ui\Component\Listing\Columns\Source\Options"/>
-                    <label translate="true">Source</label>
-                    <dataScope>source</dataScope>
                 </settings>
             </filterSelect>
         </filters>
@@ -46,7 +38,7 @@
                     <item name="imageDetailsurl" xsi:type="url" path="media_gallery/image/details"/>
                     <item name="imageComponent" xsi:type="string">standalone_adobe_stock_images_listing.standalone_adobe_stock_images_listing.adobe_stock_images_columns.preview</item>
                 </item>
-	    </argument>
-	</column>
+            </argument>
+        </column>
     </columns>
 </listing>

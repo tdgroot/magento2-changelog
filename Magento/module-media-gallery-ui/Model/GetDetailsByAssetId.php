@@ -26,7 +26,7 @@ class GetDetailsByAssetId
     /**
      * @var GetAssetsByIdsInterface
      */
-    private $getAssetById;
+    private $getAssetsById;
 
     /**
      * @var StoreManagerInterface
@@ -44,54 +44,61 @@ class GetDetailsByAssetId
     private $getAssetKeywords;
 
     /**
-     * @var AssetDetailsProviderPool
+     * @var GetAssetDetails
      */
-    private $detailsProviderPool;
+    private $getAssetDetails;
 
     /**
-     * @param AssetDetailsProviderPool $detailsProviderPool
+     * @param GetAssetDetails $getAssetDetails
      * @param GetAssetsByIdsInterface $getAssetById
      * @param StoreManagerInterface $storeManager
      * @param SourceIconProvider $sourceIconProvider
      * @param GetAssetsKeywordsInterface $getAssetKeywords
      */
     public function __construct(
-        AssetDetailsProviderPool $detailsProviderPool,
+        GetAssetDetails $getAssetDetails,
         GetAssetsByIdsInterface $getAssetById,
         StoreManagerInterface $storeManager,
         SourceIconProvider $sourceIconProvider,
         GetAssetsKeywordsInterface $getAssetKeywords
     ) {
-        $this->detailsProviderPool = $detailsProviderPool;
-        $this->getAssetById = $getAssetById;
+        $this->getAssetDetails = $getAssetDetails;
+        $this->getAssetsById = $getAssetById;
         $this->storeManager = $storeManager;
         $this->sourceIconProvider = $sourceIconProvider;
         $this->getAssetKeywords = $getAssetKeywords;
     }
 
     /**
-     * Get image details by asset ID
+     * Get image details by assets Ids
      *
-     * @param int $assetId
+     * @param array $assetIds
      * @throws LocalizedException
      * @throws Exception
      * @return array
      */
-    public function execute(int $assetId): array
+    public function execute(array $assetIds): array
     {
-        $asset = current($this->getAssetById->execute([$assetId]));
+        $assets = $this->getAssetsById->execute($assetIds);
 
-        return [
-            'image_url' => $this->getUrl($asset->getPath()),
-            'title' => $asset->getTitle(),
-            'path' => $asset->getPath(),
-            'id' => $assetId,
-            'details' => $this->detailsProviderPool->execute($asset),
-            'size' => $asset->getSize(),
-            'tags' => $this->getKeywords($asset),
-            'source' => $asset->getSource() ? $this->sourceIconProvider->getSourceIconUrl($asset->getSource()) : null,
-            'content_type' => strtoupper(str_replace('image/', '', $asset->getContentType())),
-        ];
+        $details = [];
+        foreach ($assets as $asset) {
+            $details[$asset->getId()] = [
+                'image_url' => $this->getUrl($asset->getPath()),
+                'title' => $asset->getTitle(),
+                'path' => $asset->getPath(),
+                'description' => $asset->getDescription(),
+                'id' => $asset->getId(),
+                'details' => $this->getAssetDetails->execute($asset),
+                'size' => $asset->getSize(),
+                'tags' => $this->getKeywords($asset),
+                'source' => $asset->getSource() ?
+                $this->sourceIconProvider->getSourceIconUrl($asset->getSource()) :
+                null,
+                'content_type' => strtoupper(str_replace('image/', '', $asset->getContentType())),
+            ];
+        }
+        return $details;
     }
 
     /**

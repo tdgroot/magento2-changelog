@@ -264,14 +264,13 @@ class Processor
     public function getViewFileUrl()
     {
         //The url needs to be updated base on Document root path.
-        $indexDir = str_replace('\\', DIRECTORY_SEPARATOR, $this->_indexDir);
-        $errorDir = str_replace('\\', DIRECTORY_SEPARATOR, $this->_errorDir);
-        $errorPathSuffix = $this->documentRoot->isPub() ? 'errors' . DIRECTORY_SEPARATOR
-            : 'pub' . DIRECTORY_SEPARATOR . 'errors' . DIRECTORY_SEPARATOR;
+        $indexDir = str_replace('\\', '/', $this->_indexDir);
+        $errorDir = str_replace('\\', '/', $this->_errorDir);
+        $errorPathSuffix = $this->documentRoot->isPub() ? 'errors/' : 'pub/errors/';
         $errorPath = strpos($errorDir, $indexDir) === 0 ?
             str_replace($indexDir, '', $errorDir) : $errorPathSuffix;
 
-        return $this->getBaseUrl() . $errorPath . $this->_config->skin . DIRECTORY_SEPARATOR;
+        return $this->getBaseUrl() . $errorPath . $this->_config->skin . '/';
     }
 
     /**

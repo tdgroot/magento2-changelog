@@ -84,12 +84,12 @@ class SourceIconProvider extends Column
      *
      * @return string|null
      */
-    public function getSourceIconUrl(string $sourceName): ?string
+    private function getSourceIconUrl(string $sourceName): ?string
     {
         return isset($this->sourceIcons[$sourceName])
             ? $this->assetRepository->getUrlWithParams(
                 $this->sourceIcons[$sourceName],
-                ['_secure' => $this->getIsSecure()]
+                ['_secure' => $this->isSecure()]
             )
             : null;
     }
@@ -99,7 +99,7 @@ class SourceIconProvider extends Column
      *
      * @return bool
      */
-    private function getIsSecure(): bool
+    private function isSecure(): bool
     {
         return $this->scopeConfig->isSetFlag(Store::XML_PATH_SECURE_IN_ADMINHTML);
     }

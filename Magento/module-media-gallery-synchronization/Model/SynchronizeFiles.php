@@ -9,12 +9,14 @@ namespace Magento\MediaGallerySynchronization\Model;
 
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Exception\LocalizedException;
-use Magento\Framework\Exception\ValidatorException;
 use Magento\Framework\Filesystem;
+use Magento\Framework\Filesystem\Directory\ReadInterface;
 use Magento\Framework\Filesystem\Driver\File;
+use Magento\Framework\Stdlib\DateTime\DateTime;
 use Magento\MediaGalleryApi\Api\GetAssetsByPathsInterface;
-use Magento\MediaGalleryApi\Api\SaveAssetsInterface;
+use Magento\MediaGallerySynchronizationApi\Model\ImportFilesInterface;
 use Magento\MediaGallerySynchronizationApi\Api\SynchronizeFilesInterface;
+use Magento\MediaGallerySynchronization\Model\Filesystem\GetFileInfo;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -23,14 +25,9 @@ use Psr\Log\LoggerInterface;
 class SynchronizeFiles implements SynchronizeFilesInterface
 {
     /**
-     * @var CreateAssetFromFile
+     * Date format
      */
-    private $createAssetFromFile;
-
-    /**
-     * @var SaveAssetsInterface
-     */
-    private $saveAsset;
+    private const DATE_FORMAT = 'Y-m-d H:i:s';
 
     /**
      * @var LoggerInterface
@@ -38,14 +35,14 @@ class SynchronizeFiles implements SynchronizeFilesInterface
     private $log;
 
     /**
-     * @var GetAssetsByPathsInterface
-     */
-    private $getAssetsByPaths;
-
-    /**
      * @var Filesystem
      */
     private $filesystem;
+
+    /**
+     * @var GetAssetsByPathsInterface
+     */
+    private $getAssetsByPaths;
 
     /**
      * @var File
@@ -53,55 +50,63 @@ class SynchronizeFiles implements SynchronizeFilesInterface
     private $driver;
 
     /**
+     * @var GetFileInfo
+     */
+    private $getFileInfo;
+
+    /**
+     * @var ImportFilesInterface
+     */
+    private $importFiles;
+
+    /**
+     * @var DateTime
+     */
+    private $date;
+
+    /**
      * @param File $driver
      * @param Filesystem $filesystem
-     * @param GetAssetsByPathsInterface $getAssetsByPaths
-     * @param CreateAssetFromFile $createAssetFromFile
-     * @param SaveAssetsInterface $saveAsset
+     * @param DateTime $date
      * @param LoggerInterface $log
+     * @param GetFileInfo $getFileInfo
+     * @param GetAssetsByPathsInterface $getAssetsByPaths
+     * @param ImportFilesInterface $importFiles
      */
     public function __construct(
         File $driver,
         Filesystem $filesystem,
+        DateTime $date,
+        LoggerInterface $log,
+        GetFileInfo $getFileInfo,
         GetAssetsByPathsInterface $getAssetsByPaths,
-        CreateAssetFromFile $createAssetFromFile,
-        SaveAssetsInterface $saveAsset,
-        LoggerInterface $log
+        ImportFilesInterface $importFiles
     ) {
         $this->driver = $driver;
         $this->filesystem = $filesystem;
-        $this->getAssetsByPaths = $getAssetsByPaths;
-        $this->createAssetFromFile = $createAssetFromFile;
-        $this->saveAsset = $saveAsset;
+        $this->date = $date;
         $this->log = $log;
+        $this->getFileInfo = $getFileInfo;
+        $this->getAssetsByPaths = $getAssetsByPaths;
+        $this->importFiles = $importFiles;
     }
 
     /**
      * @inheritdoc
      */
-    public function execute(array $files): void
+    public function execute(array $paths): void
     {
-        $assets = $this->getExistingAssets($files);
-        foreach ($files as $file) {
-            $path = $this->getFilePath($file);
-            $time = $this->getFileModificationTime($file);
-            if (isset($assets[$path]) && $time === $assets[$path]) {
-                continue;
-            }
-            try {
-                $this->saveAsset->execute([$this->createAssetFromFile->execute($file)]);
-            } catch (\Exception $exception) {
-                $this->log->critical($exception);
-                $failedFiles[] = $file->getFilename();
-            }
-        }
-
-        if (!empty($failedFiles)) {
+        try {
+            $this->importFiles->execute($this->getPathsToUpdate($paths));
+        } catch (LocalizedException $localizedException) {
+            throw $localizedException;
+        } catch (\Exception $exception) {
+            $this->log->critical($exception);
             throw new LocalizedException(
                 __(
-                    'Could not update media assets for files: %files',
+                    'Could not import media assets for files: %files',
                     [
-                        'files' => implode(', ', $failedFiles)
+                        'files' => implode(', ', $paths)
                     ]
                 )
             );
@@ -109,64 +114,64 @@ class SynchronizeFiles implements SynchronizeFilesInterface
     }
 
     /**
-     * Retrieve relative file path
+     * Return existing assets from files
      *
-     * @param \SplFileInfo $file
-     * @return string
+     * @param string[] $paths
+     * @return array
+     * @throws LocalizedException
      */
-    private function getFilePath(\SplFileInfo $file): string
+    private function getPathsToUpdate(array $paths): array
     {
-        return $this->getRelativePath($file->getPath() . '/' . $file->getFileName());
+        $assetPaths = [];
+
+        foreach ($paths as $path) {
+            $assetPath = $this->getAssetPath($path);
+            $assetPaths[$assetPath] = $assetPath;
+        }
+
+        $assets = $this->getAssetsByPaths->execute($assetPaths);
+
+        foreach ($assets as $asset) {
+            if ($asset->getUpdatedAt() === $this->getFileModificationTime($asset->getPath())) {
+                unset($assetPaths[$asset->getPath()]);
+            }
+        }
+
+        return $assetPaths;
     }
 
     /**
      * Retrieve formatted file modification time
      *
-     * @param \SplFileInfo $file
+     * @param string $path
      * @return string
      */
-    private function getFileModificationTime(\SplFileInfo $file): string
+    private function getFileModificationTime(string $path): string
     {
-        return (new \DateTime())->setTimestamp($file->getMTime())->format('Y-m-d H:i:s');
-    }
-
-    /**
-     * Return existing assets from files
-     *
-     * @param \SplFileInfo[] $files
-     * @return array
-     * @throws LocalizedException
-     */
-    private function getExistingAssets(array $files): array
-    {
-        $result = [];
-        $paths = array_map(function ($file) {
-            return $this->getFilePath($file);
-        }, $files);
-
-        $assets = $this->getAssetsByPaths->execute($paths);
-
-        foreach ($assets as $asset) {
-            $result[$asset->getPath()] = $asset->getUpdatedAt();
-        }
-
-        return $result;
+        return $this->date->gmtDate(
+            self::DATE_FORMAT,
+            $this->getFileInfo->execute($this->getMediaDirectory()->getAbsolutePath($path))->getMTime()
+        );
     }
 
     /**
      * Get correct path for media asset
      *
-     * @param string $file
+     * @param string $path
      * @return string
      */
-    private function getRelativePath(string $file): string
+    private function getAssetPath(string $path): string
     {
-        $path = $this->filesystem->getDirectoryRead(DirectoryList::MEDIA)->getRelativePath($file);
+        return $this->driver->getParentDirectory($path) === '.' ? '/' . $path : $path;
+    }
 
-        if ($this->driver->getParentDirectory($path) === '.') {
-            $path = '/' . $path;
-        }
-
-        return $path;
+    /**
+     * Retrieve media directory instance
+     *
+     * @return ReadInterface
+     */
+    private function getMediaDirectory(): ReadInterface
+    {
+        return $this->filesystem->getDirectoryRead(DirectoryList::MEDIA);
     }
 }

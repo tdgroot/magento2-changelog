@@ -17,7 +17,8 @@
 @color-media-gallery-buttons-background: #e3e3e3;
 @color-media-gallery-buttons-border: #adadad;
 @color-media-gallery-buttons-text: #514943;
-
+@color-media-gallery-checkbox-background: #eee;
+@color-media-gallery-scrollbar-background: #fff;
 & when (@media-common = true) {
 
     .media-gallery-delete-image-action,
@@ -25,6 +26,41 @@
 
         .modal-content {
             word-wrap: anywhere;
+        }
+    }
+
+    .media-gallery-asset-ui-select-filter,
+    .edit-image-details {
+
+        .admin__action-multiselect-crumb {
+            max-width: 70%;
+            overflow: hidden;
+            text-overflow: ellipsis
+        }
+
+        .admin__action-multiselect-label > span {
+            display: block;
+            margin-top: -2px;
+            max-height: 18px;
+            max-width: 70%;
+            overflow: hidden;
+            padding-left: 23px;
+            position: absolute;
+            text-overflow: ellipsis;
+        }
+    }
+
+    .media-gallery-asset-ui-select-filter,
+    .edit-image-details {
+        .admin__action-multiselect-item-path {
+            float: right;
+            max-height: 70px;
+            max-width: 70px;
+        }
+
+        .admin__action-multiselect-label {
+            display: inline-block;
+            width: 100%;
         }
     }
 
@@ -38,6 +74,27 @@
         background-color: @color-media-gallery-buttons-background;
         border-color: @color-media-gallery-buttons-border;
         color: @color-media-gallery-buttons-text;
+    }
+
+    .mediagallery-massaction-checkbox {
+        background-color: @color-media-gallery-checkbox-background;
+        border-radius: 4px;
+        height: 40px;
+        input[type='checkbox'] {
+            margin-left: 10px;
+            margin-top: 11px;
+        }
+        margin-left: 15px;
+        margin-top: 10px;
+        position: absolute;
+        width: 40px;
+        z-index: 10;
+    }
+
+    .mediagallery-massaction-items-count {
+        display: inline-block;
+        margin-left: -15px;
+        padding-right: 20px;
     }
 
     .media-gallery-container {
@@ -113,8 +170,9 @@
             height: 30px;
             margin: 1px;
             padding-left: 6px;
+            padding-right: 10px;
             padding-top: 6px;
-            width: 100%;
+            width: max-content;
         }
 
         .jstree-default .jstree-clicked {
@@ -148,7 +206,7 @@
                 display: -webkit-box;
                 font-size: 15px;
                 font-weight: bold;
-                line-height: 18px;
+                line-height: 20px;
                 max-height: 50px;
                 overflow: hidden;
                 padding-bottom: 2px;
@@ -215,8 +273,18 @@
         }
 
         .media-directory-container {
+            &::-webkit-scrollbar {
+                background-color: @color-media-gallery-scrollbar-background;
+            }
+            &::-webkit-scrollbar-thumb {
+                background-color: @color-masonry-grey;
+            }
             float: left;
+            max-width: 50%;
+            overflow-x: scroll;
+            overflow-y: hidden;
             padding-right: 40px;
+            scrollbar-color: @color-masonry-grey @color-media-gallery-scrollbar-background;
         }
 
         .media-gallery-image-block {
@@ -254,7 +322,7 @@
             }
         }
 
-        .adobe-stock-icon {
+        .media-gallery-source-icon {
             margin-bottom: -6px;
             width: 29px;
         }
@@ -267,15 +335,53 @@
             margin: 10px 0;
             position: relative;
         }
+
+        .admin__data-grid-filters .admin__form-field {
+            .action-select-wrap {
+                .action-menu {
+                    width: 110%;
+                }
+                .admin__action-multiselect-search-label {
+                    right: 1.5rem;
+                }
+            }
+
+            .action-close {
+                padding: 0;
+                &:before {
+                    font-size: 6px;
+                }
+            }
+        }
     }
 
-    .media-gallery-image-details-modal {
+    .media-gallery-image-details-modal,
+    .media-gallery-edit-image-details-modal {
+
+        .admin__action-multiselect-crumb {
+            .action-close {
+                padding: 0;
+
+                &:before {
+                    font-size: .5em;
+                }
+            }
+        }
+
+        .edit-image-details {
+            padding: 50px;
+        }
+
+        .path-display {
+            margin-top: 8px;
+        }
+
         .page-action-buttons {
             float: right;
         }
 
         .image-type {
-            .adobe-stock-icon {
+            .media-gallery-source-icon {
                 margin-bottom: -6px;
                 width: 29px;
             }
@@ -286,30 +392,30 @@
         }
 
         .image-details {
-            .image-details-image {
-                float: left;
-                max-width: 70%;
-                width: auto;
+            .lib-vendor-prefix-display();
 
+            .image-details-image {
                 img {
                     max-height: 650px;
                 }
             }
 
             .image-details-sidebar {
-                float: left;
-                max-width: 30%;
+                .lib-vendor-prefix-flex-grow(1);
+                margin-top: 0;
                 padding-left: 40px;
 
                 .image-details-section {
                     margin-bottom: 40px;
-                    min-width: 350px;
+                    max-width: 400px;
+                    min-width: 290px;
                     word-wrap: anywhere;
                     .lib-clearfix();
                 }
 
                 h3.image-title {
                     font-weight: bold;
+                    line-height: 1.5;
                 }
 
                 .attributes {
@@ -321,12 +427,14 @@
 
                         & > * {
                             float: left;
+                            margin-left: -1px;
                             width: 50%;
                         }
 
                         .value {
                             display: inline;
                             float: right;
+                            margin-left: 1px;
                         }
 
                         .title {
@@ -366,5 +474,22 @@
     .masonry-results-number {
         display: inline-block;
         margin-right: 1.4rem;
+    }
+}
+
+.media-width(@extremum, @break) when (@extremum = 'max') and (@break = @screen__m) {
+    .media-gallery-image-details-modal {
+        .image-details {
+            display: block;
+
+            .image-details-sidebar {
+                margin-top: 20px;
+                padding-left: 0;
+            }
+
+            .image-details-image img {
+                max-height: 450px;
+            }
+        }
     }
 }

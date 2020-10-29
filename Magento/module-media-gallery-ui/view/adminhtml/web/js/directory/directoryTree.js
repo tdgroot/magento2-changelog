@@ -10,7 +10,8 @@ define([
     'uiLayout',
     'underscore',
     'Magento_MediaGalleryUi/js/directory/actions/createDirectory',
-    'jquery/jstree/jquery.jstree'
+    'jquery/jstree/jquery.jstree',
+    'Magento_Ui/js/lib/view/utils/async'
 ], function ($, Component, layout, _, createDirectory) {
     'use strict';
 
@@ -19,12 +20,15 @@ define([
             filterChipsProvider: 'componentType = filters, ns = ${ $.ns }',
             directoryTreeSelector: '#media-gallery-directory-tree',
             getDirectoryTreeUrl: 'media_gallery/directories/gettree',
+            createDirectoryUrl: 'media_gallery/directories/create',
+            deleteDirectoryUrl: 'media_gallery/directories/delete',
+            jsTreeReloaded: null,
             modules: {
                 directories: '${ $.name }_directories',
                 filterChips: '${ $.filterChipsProvider }'
             },
             listens: {
-                '${ $.provider }:params.filters.path': 'clearFiltersHandle'
+                '${ $.provider }:params.filters.path': 'updateSelectedDirectory'
             },
             viewConfig: [{
                 component: 'Magento_MediaGalleryUi/js/directory/directories',
@@ -40,13 +44,11 @@ define([
         initialize: function () {
             this._super().observe(['activeNode']).initView();
 
-            this.waitForCondition(
+            $.async(
+                this.directoryTreeSelector,
+                this,
                 function () {
-                    return $(this.directoryTreeSelector).length === 0;
-                }.bind(this),
-                function () {
-                    this.createFolderIfNotExists().then(function () {
-                        this.getJsonTree();
+                    this.renderDirectoryTree().then(function () {
                         this.initEvents();
                     }.bind(this));
                 }.bind(this)
@@ -56,25 +58,102 @@ define([
         },
 
         /**
-         * Create folder by provided current_tree_path param
+         * Render directory tree component.
          */
-        createFolderIfNotExists: function () {
-            var isMediaBrowser = !_.isUndefined(window.MediabrowserUtility),
-                currentTreePath = isMediaBrowser ? window.MediabrowserUtility.pathId : null,
-                deferred = $.Deferred();
+        renderDirectoryTree: function () {
+            return this.getJsonTree().then(function (data) {
+                this.createFolderIfNotExists(data).then(function (isFolderCreated) {
+                    if (isFolderCreated) {
+                        this.getJsonTree().then(function (newData) {
+                            this.createTree(newData);
+                        }.bind(this));
+                    } else {
+                        this.createTree(data);
+                    }
+                }.bind(this));
+            }.bind(this));
+        },
 
-            if (currentTreePath) {
-                createDirectory(
-                    this.createDirectoryUrl,
-                    this.convertPathToPathsArray(Base64.idDecode(currentTreePath))
-                ).always(function () {
-                    deferred.resolve();
-                });
-            } else {
-                deferred.resolve();
+        /**
+         * Set jstree reloaded
+         *
+         * @param {Boolean} value
+         */
+        setJsTreeReloaded: function (value) {
+            this.jsTreeReloaded = value;
+        },
+
+        /**
+         * Create folder by provided current_tree_path param
+         *
+         * @param {Array} directories
+         */
+        createFolderIfNotExists: function (directories) {
+            var requestedDirectory = this.getRequestedDirectory(),
+                deferred = $.Deferred(),
+                pathArray;
+
+            if (_.isNull(requestedDirectory)) {
+                deferred.resolve(false);
+
+                return deferred.promise();
             }
 
+            if (this.isDirectoryExist(directories[0], requestedDirectory)) {
+                deferred.resolve(false);
+
+                return deferred.promise();
+            }
+
+            pathArray = this.convertPathToPathsArray(requestedDirectory);
+
+            $.each(pathArray, function (i, val) {
+                if (this.isDirectoryExist(directories[0], val)) {
+                    pathArray.splice(i, 1);
+                }
+            }.bind(this));
+
+            createDirectory(
+                this.createDirectoryUrl,
+                pathArray
+            ).then(function () {
+                deferred.resolve(true);
+            });
+
             return deferred.promise();
+        },
+
+        /**
+         * Verify if directory exists in array
+         *
+         * @param {Array} directories
+         * @param {String} directoryId
+         */
+        isDirectoryExist: function (directories, directoryId) {
+            var found = false;
+
+            /**
+             * Recursive search in array
+             *
+             * @param {Array} data
+             * @param {String} id
+             */
+            function recurse(data, id) {
+                var i;
+
+                for (i = 0; i < data.length; i++) {
+                    if (data[i].attr.id === id) {
+                        found = data[i];
+                        break;
+                    } else if (data[i].children && data[i].children.length) {
+                        recurse(data[i].children, id);
+                    }
+                }
+            }
+
+            recurse(directories, directoryId);
+
+            return found;
         },
 
         /**
@@ -122,7 +201,7 @@ define([
         /**
          * Remove ability to multiple select on nodes
          */
-        overrideMultiselectBehavior: function () {
+        disableMultiselectBehavior: function () {
             $.jstree.defaults.ui['select_range_modifier'] = false;
             $.jstree.defaults.ui['select_multiple_modifier'] = false;
         },
@@ -131,33 +210,55 @@ define([
          *  Handle jstree events
          */
         initEvents: function () {
-            this.overrideMultiselectBehavior();
-
-            $(this.directoryTreeSelector).on('loaded.jstree', function () {
-                this.checkChipFiltersState();
-            }.bind(this));
+            this.initJsTreeEvents();
+            this.disableMultiselectBehavior();
 
             $(window).on('reload.MediaGallery', function () {
-                this.checkChipFiltersState();
+                this.getJsonTree().then(function (data) {
+                    this.createFolderIfNotExists(data).then(function (isCreated) {
+                        if (isCreated) {
+                            this.renderDirectoryTree().then(function () {
+                                this.setJsTreeReloaded(true);
+                                this.initJsTreeEvents();
+                            }.bind(this));
+                        } else {
+                            this.updateSelectedDirectory();
+                        }
+                    }.bind(this));
+                }.bind(this));
+            }.bind(this));
+        },
+
+        /**
+         * Fire event for jstree component
+         */
+        initJsTreeEvents: function () {
+            $(this.directoryTreeSelector).on('select_node.jstree', function (element, data) {
+                this.setActiveNodeFilter($(data.rslt.obj).data('path'));
+                this.setJsTreeReloaded(false);
             }.bind(this));
 
-            $(this.directoryTreeSelector).on('select_node.jstree', function (element, data) {
-                var path = $(data.rslt.obj).data('path');
-
-                this.setActiveNodeFilter(path);
+            $(this.directoryTreeSelector).on('loaded.jstree', function () {
+                this.updateSelectedDirectory();
             }.bind(this));
         },
 
         /**
          * Verify directory filter on init event, select folder per directory filter state
          */
-        checkChipFiltersState: function () {
+        updateSelectedDirectory: function () {
             var currentFilterPath = this.filterChips().filters.path,
-                isMediaBrowser = !_.isUndefined(window.MediabrowserUtility),
+                requestedDirectory = this.getRequestedDirectory(),
                 currentTreePath;
 
-            currentTreePath = this.isFiltersApplied(currentFilterPath) || !isMediaBrowser ? currentFilterPath :
-                Base64.idDecode(window.MediabrowserUtility.pathId);
+            if (_.isUndefined(currentFilterPath)) {
+                this.clearFiltersHandle();
+
+                return;
+            }
+
+            currentTreePath = this.isFilterApplied(currentFilterPath) || _.isNull(requestedDirectory) ?
+                currentFilterPath : requestedDirectory;
 
             if (this.folderExistsInTree(currentTreePath)) {
                 this.locateNode(currentTreePath);
@@ -180,13 +281,22 @@ define([
         },
 
         /**
+         * Get requested directory from MediabrowserUtility
+         *
+         * @returns {String|null}
+         */
+        getRequestedDirectory: function () {
+            return !_.isUndefined(window.MediabrowserUtility) && window.MediabrowserUtility.pathId !== '' ?
+                Base64.idDecode(window.MediabrowserUtility.pathId) : null;
+        },
+
+        /**
          * Check if need to select directory by filters state
          *
          * @param {String} currentFilterPath
          */
-        isFiltersApplied: function (currentFilterPath) {
-            return !_.isUndefined(currentFilterPath) && currentFilterPath !== '' &&
-                currentFilterPath !== 'wysiwyg' && currentFilterPath !== 'catalog/category';
+        isFilterApplied: function (currentFilterPath) {
+            return !_.isUndefined(currentFilterPath) && currentFilterPath !== '';
         },
 
         /**
@@ -195,9 +305,7 @@ define([
          * @param {String} path
          */
         locateNode: function (path) {
-            var selectedId =  $(this.directoryTreeSelector).jstree('get_selected').attr('id');
-
-            if (path === selectedId) {
+            if (path === $(this.directoryTreeSelector).jstree('get_selected').attr('id')) {
                 return;
             }
             path = path.replace(/\//g, '\\/');
@@ -207,14 +315,12 @@ define([
         },
 
         /**
-         * Listener to clear filters event
+         * Clear filters
          */
         clearFiltersHandle: function () {
-            if (_.isUndefined(this.filterChips().filters.path)) {
-                $(this.directoryTreeSelector).jstree('deselect_all');
-                this.activeNode(null);
-                this.directories().setInActive();
-            }
+            $(this.directoryTreeSelector).jstree('deselect_all');
+            this.activeNode(null);
+            this.directories().setInActive();
         },
 
         /**
@@ -223,7 +329,7 @@ define([
          * @param {String} nodePath
          */
         setActiveNodeFilter: function (nodePath) {
-            if (this.activeNode() === nodePath) {
+            if (this.activeNode() === nodePath && !this.jsTreeReloaded) {
                 this.selectStorageRoot();
             } else {
                 this.selectFolder(nodePath);
@@ -244,14 +350,13 @@ define([
             this.filterChips().set('applied', filters);
             this.activeNode(null);
             this.waitForCondition(
-              function () {
-                return _.isUndefined(this.directories());
-            }.bind(this),
                 function () {
-                this.directories().setInActive();
-            }.bind(this)
-          );
-
+                    return _.isUndefined(this.directories());
+                }.bind(this),
+                function () {
+                    this.directories().setInActive();
+                }.bind(this)
+            );
         },
 
         /**
@@ -275,8 +380,8 @@ define([
         },
 
         /**
-          * Remove active node from directory tree, and select next
-          */
+         * Remove active node from directory tree, and select next
+         */
         removeNode: function () {
             $(this.directoryTreeSelector).jstree('remove');
         },
@@ -293,29 +398,30 @@ define([
             filters = $.extend(true, filters, applied);
             filters.path = path;
             this.filterChips().set('applied', filters);
-
         },
 
         /**
          * Reload jstree and update jstree events
          */
         reloadJsTree: function () {
-            $.ajaxSetup({
-                async: false
-            });
+            var deferred = $.Deferred();
 
-            this.getJsonTree();
-            this.initEvents();
+            this.getJsonTree().then(function (data) {
+                this.createTree(data);
+                this.setJsTreeReloaded(true);
+                this.initEvents();
+                deferred.resolve();
+            }.bind(this));
 
-            $.ajaxSetup({
-                async: true
-            });
+            return deferred.promise();
         },
 
         /**
          * Get json data for jstree
          */
         getJsonTree: function () {
+            var deferred = $.Deferred();
+
             $.ajax({
                 url: this.getDirectoryTreeUrl,
                 type: 'GET',
@@ -327,8 +433,8 @@ define([
                  * @param {Object} data
                  */
                 success: function (data) {
-                    this.createTree(data);
-                }.bind(this),
+                    deferred.resolve(data);
+                },
 
                 /**
                  * Error handler for request
@@ -337,9 +443,12 @@ define([
                  * @param {String} textStatus
                  */
                 error: function (jqXHR, textStatus) {
+                    deferred.reject();
                     throw textStatus;
                 }
             });
+
+            return deferred.promise();
         },
 
         /**

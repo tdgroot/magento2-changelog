@@ -1,0 +1,24 @@
+{
+    "name": "magento/module-graph-ql-cache",
+    "description": "N/A",
+    "type": "magento2-module",
+    "require": {
+        "php": "~7.3.0||~7.4.0",
+        "magento/framework": "103.0.*",
+        "magento/module-page-cache": "100.4.*",
+        "magento/module-graph-ql": "100.4.*"
+    },
+    "license": [
+        "OSL-3.0",
+        "AFL-3.0"
+    ],
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "Magento\\GraphQlCache\\": ""
+        }
+    },
+    "version": "100.4.0"
+}

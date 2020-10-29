@@ -91,7 +91,7 @@ class Widget extends \Magento\Backend\Block\Template
             \Magento\Backend\Block\Widget\Button::class
         )->setData(
             [
-                'label' => $label,
+                'label' => $this->escapeHtml($label),
                 'onclick' => $onclick,
                 'class' => $class,
                 'type' => 'button',

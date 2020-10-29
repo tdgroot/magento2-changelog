@@ -17,7 +17,8 @@ use Magento\Framework\Data\Collection\AbstractDb;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\File\Mime;
 use Magento\Framework\Filesystem;
-use Magento\Framework\Filesystem\Io\File as IoFileSystem;
+use Magento\Framework\Filesystem\Directory\ReadFactory;
+use Magento\Framework\Filesystem\Io\File as IoFile;
 use Magento\Framework\Model\Context;
 use Magento\Framework\Model\ResourceModel\AbstractResource;
 use Magento\Framework\Registry;
@@ -44,14 +45,19 @@ class File extends BackendFile
     private $mime;
 
     /**
-     * @var IoFileSystem
-     */
-    private $ioFileSystem;
-
-    /**
      * @var Database
      */
     private $databaseHelper;
+
+    /**
+     * @var IoFile|null
+     */
+    private $ioFile;
+
+    /**
+     * @var Read
+     */
+    private $tmpDirectory;
 
     /**
      * @param Context $context
@@ -66,7 +72,8 @@ class File extends BackendFile
      * @param AbstractDb|null $resourceCollection
      * @param array $data
      * @param Database $databaseHelper
-     * @param IoFileSystem $ioFileSystem
+     * @param IoFile|null $ioFile
+     * @param ReadFactory $tmpDirectory
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
@@ -82,7 +89,8 @@ class File extends BackendFile
         AbstractDb $resourceCollection = null,
         array $data = [],
         Database $databaseHelper = null,
-        IoFileSystem $ioFileSystem = null
+        IoFile $ioFile = null,
+        ReadFactory $tmpDirectory = null
     ) {
         parent::__construct(
             $context,
@@ -97,8 +105,13 @@ class File extends BackendFile
             $data
         );
         $this->urlBuilder = $urlBuilder;
-        $this->databaseHelper = $databaseHelper ?? ObjectManager::getInstance()->get(Database::class);
-        $this->ioFileSystem = $ioFileSystem ?? ObjectManager::getInstance()->get(IoFileSystem::class);
+        $this->databaseHelper = $databaseHelper ?: ObjectManager::getInstance()->get(Database::class);
+        $this->ioFile = $ioFile ?: ObjectManager::getInstance()->get(IoFile::class);
+        /** @var ReadFactory $readFactory */
+        $readFactory = ObjectManager::getInstance()->get(ReadFactory::class);
+        $this->tmpDirectory = $tmpDirectory ?: $readFactory->create(
+            $this->_mediaDirectory->getAbsolutePath() . 'tmp/' . FileProcessor::FILE_DIR
+        );
     }
 
     /**
@@ -120,16 +133,13 @@ class File extends BackendFile
             );
         }
 
-        if (!empty($this->getAllowedExtensions()) &&
-            (!isset($this->ioFileSystem->getPathInfo($file)['extension']) ||
-            !in_array($this->ioFileSystem->getPathInfo($file)['extension'], $this->getAllowedExtensions()))
-        ) {
-            throw new LocalizedException(
-                __('Something is wrong with the file upload settings.')
-            );
+        $extension = $this->ioFile->getPathInfo($file);
+        $fileExtension = is_array($extension) ? $extension['extension'] : '';
+        if (!$this->isAllowedExtension($fileExtension)) {
+            throw new LocalizedException(__("Invalid file provided."));
         }
 
-        if (isset($value['exists'])) {
+        if ($this->getOrigData('value') === $file) {
             $this->setValue($file);
             return $this;
         }
@@ -147,8 +157,10 @@ class File extends BackendFile
     {
         $value = $this->getValue();
         if ($value && !is_array($value)) {
-            //phpcs:ignore Magento2.Functions.DiscouragedFunction
-            $fileName = $this->_getUploadDir() . '/' . basename($value);
+            $fileName = $this->_mediaDirectory->getAbsolutePath(
+                //phpcs:ignore Magento2.Functions.DiscouragedFunction
+                $this->_getUploadDir() . DIRECTORY_SEPARATOR . basename($value)
+            );
             $fileInfo = null;
             if ($this->_mediaDirectory->isExist($fileName)) {
                 $stat = $this->_mediaDirectory->stat($fileName);
@@ -228,7 +240,7 @@ class File extends BackendFile
      */
     protected function getTmpMediaPath($filename)
     {
-        return 'tmp/' . FileProcessor::FILE_DIR . '/' . $filename;
+        return $this->tmpDirectory->getAbsolutePath($this->tmpDirectory->getRelativePath($filename));
     }
 
     /**
@@ -280,10 +292,12 @@ class File extends BackendFile
      */
     private function updateMediaDirectory(string $filename, string $url)
     {
-        $relativeMediaPath = $this->getRelativeMediaPath($url);
+        $absoluteMediaPath = $this->_mediaDirectory->getAbsolutePath($this->getRelativeMediaPath($url));
         $tmpMediaPath = $this->getTmpMediaPath($filename);
-        $mediaPath = $this->_mediaDirectory->isFile($relativeMediaPath) ? $relativeMediaPath : $tmpMediaPath;
-        $destinationMediaPath = $this->_getUploadDir() . '/' . $filename;
+        $mediaPath = $this->_mediaDirectory->isFile($absoluteMediaPath) ? $absoluteMediaPath : $tmpMediaPath;
+        $destinationMediaPath = $this->_mediaDirectory->getAbsolutePath(
+            $this->_getUploadDir() . DIRECTORY_SEPARATOR . $filename
+        );
 
         $result = $mediaPath === $destinationMediaPath;
         if (!$result) {
@@ -307,5 +321,20 @@ class File extends BackendFile
         } else {
             $this->unsValue();
         }
+    }
+
+    /**
+     * Check if specified extension is allowed.
+     *
+     * @param string $extension
+     * @return boolean
+     */
+    public function isAllowedExtension(string $extension): bool
+    {
+        if (empty($this->getAllowedExtensions())) {
+            return true;
+        }
+
+        return in_array(strtolower($extension), $this->getAllowedExtensions());
     }
 }

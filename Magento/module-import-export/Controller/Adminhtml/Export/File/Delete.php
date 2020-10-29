@@ -40,7 +40,7 @@ class Delete extends ExportController implements HttpPostActionInterface
 
     /**
      * @var DriverInterface
-     * @deprecated 100.3.5 Is not used anymore.
+     * @deprecated Is not used anymore.
      * @see WriteInterface
      */
     private $file;

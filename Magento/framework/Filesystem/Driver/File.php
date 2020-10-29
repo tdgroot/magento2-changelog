@@ -13,7 +13,7 @@ use Magento\Framework\Filesystem\DriverInterface;
 use Magento\Framework\Filesystem\Glob;
 
 /**
- * Class for filesystem driver file
+ * Class File for Filesystem Driver
  *
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
@@ -594,10 +594,11 @@ class File implements DriverInterface
     {
         try {
             $result = @stream_get_line($resource, $length, $ending);
-        } catch (\Exception $e) {
-            $result = false;
+        } catch (\Throwable $e) {
+            throw new FileSystemException(
+                new \Magento\Framework\Phrase('File cannot be read %1', [$this->getWarningMessage()])
+            );
         }
-
         if (false === $result) {
             throw new FileSystemException(
                 new \Magento\Framework\Phrase('File cannot be read %1', [$this->getWarningMessage()])
@@ -980,7 +981,7 @@ class File implements DriverInterface
 
         //Removing redundant directory separators.
         $path = preg_replace(
-            '/\\' .DIRECTORY_SEPARATOR .'\\' .DIRECTORY_SEPARATOR .'+/',
+            '/\\' . DIRECTORY_SEPARATOR . '\\' . DIRECTORY_SEPARATOR . '+/',
             DIRECTORY_SEPARATOR,
             $path
         );

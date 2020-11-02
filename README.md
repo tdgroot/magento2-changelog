@@ -6,6 +6,19 @@ Get insight into what has changed between Magento releases.
 
 [See changelog for 2.4 release line](https://github.com/tdgroot/magento2-changelog/tree/2.4).
 
+## Diffing between releases
+
+```
+# Make sure you have all branches and tags present.
+git fetch --all --tags
+
+# Diff Magento_Catalog frontend templates between 2.3.5-p2 and 2.3.6
+git diff 2.3.5-p2 2.3.6 Magento/module-catalog/view/frontend/templates/
+
+# Diff JS changes between 2.4.0 and 2.4.1
+git diff 2.4.0 2.4.1 Magento/*.js
+```
+
 ## Adding new releases
 
 Adding a new release is quite simple, run the following:

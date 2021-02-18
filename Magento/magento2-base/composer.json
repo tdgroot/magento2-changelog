@@ -2,13 +2,16 @@
     "name": "magento/magento2-base",
     "description": "Magento 2 Base (Community Edition)",
     "type": "magento2-component",
-    "version": "2.3.6",
+    "license": [
+        "OSL-3.0",
+        "AFL-3.0"
+    ],
+    "version": "2.3.6-p1",
     "require": {
         "magento/magento-composer-installer": "*",
         "php": "~7.1.3||~7.2.0||~7.3.0",
         "ext-intl": "*",
         "ext-mbstring": "*",
-        "braintree/braintree_php": "3.35.0",
         "composer/composer": "^1.9",
         "laminas/laminas-code": "~3.3.0",
         "laminas/laminas-config": "^2.6.0",
@@ -45,10 +48,6 @@
     "conflict": {
         "gene/bluefoot": "*"
     },
-    "license": [
-        "OSL-3.0",
-        "AFL-3.0"
-    ],
     "replace": {
         "trentrichardson/jquery-timepicker-addon": "1.4.3",
         "components/jquery": "1.11.0",
@@ -58,26 +57,28 @@
         "tinymce/tinymce": "3.4.7"
     },
     "extra": {
+        "chmod": [
+            {
+                "mask": "0755",
+                "path": "bin/magento"
+            }
+        ],
         "component_paths": {
-            "trentrichardson/jquery-timepicker-addon": "lib/web/jquery/jquery-ui-timepicker-addon.js",
+            "blueimp/jquery-file-upload": "lib/web/jquery/fileUploader",
             "components/jquery": [
                 "lib/web/jquery.js",
                 "lib/web/jquery/jquery.min.js",
                 "lib/web/jquery/jquery-migrate.js"
             ],
-            "blueimp/jquery-file-upload": "lib/web/jquery/fileUploader",
             "components/jqueryui": "lib/web/jquery/jquery-ui.js",
-            "twbs/bootstrap": "lib/web/jquery/jquery.tabs.js",
-            "tinymce/tinymce": "lib/web/tiny_mce_4"
+            "tinymce/tinymce": "lib/web/tiny_mce_4",
+            "trentrichardson/jquery-timepicker-addon": "lib/web/jquery/jquery-ui-timepicker-addon.js",
+            "twbs/bootstrap": "lib/web/jquery/jquery.tabs.js"
         },
         "map": [
             [
                 ".editorconfig",
                 ".editorconfig"
-            ],
-            [
-                ".github",
-                ".github"
             ],
             [
                 ".htaccess",
@@ -220,48 +221,8 @@
                 "dev/tests/error_handler.php"
             ],
             [
-                "dev/tests/functional/.gitignore",
-                "dev/tests/functional/.gitignore"
-            ],
-            [
-                "dev/tests/functional/bootstrap.php",
-                "dev/tests/functional/bootstrap.php"
-            ],
-            [
-                "dev/tests/functional/composer.json",
-                "dev/tests/functional/composer.json"
-            ],
-            [
-                "dev/tests/functional/credentials.xml.dist",
-                "dev/tests/functional/credentials.xml.dist"
-            ],
-            [
-                "dev/tests/functional/etc",
-                "dev/tests/functional/etc"
-            ],
-            [
-                "dev/tests/functional/isolation.php",
-                "dev/tests/functional/isolation.php"
-            ],
-            [
-                "dev/tests/functional/lib",
-                "dev/tests/functional/lib"
-            ],
-            [
-                "dev/tests/functional/phpunit.xml.dist",
-                "dev/tests/functional/phpunit.xml.dist"
-            ],
-            [
-                "dev/tests/functional/tests",
-                "dev/tests/functional/tests"
-            ],
-            [
-                "dev/tests/functional/testsuites/Magento",
-                "dev/tests/functional/testsuites/Magento"
-            ],
-            [
-                "dev/tests/functional/utils",
-                "dev/tests/functional/utils"
+                "dev/tests/functional",
+                "dev/tests/functional"
             ],
             [
                 "dev/tests/integration/.gitignore",
@@ -420,12 +381,12 @@
                 "lib/web/images"
             ],
             [
-                "lib/web/jquery.js",
-                "lib/web/jquery.js"
-            ],
-            [
                 "lib/web/jquery",
                 "lib/web/jquery"
+            ],
+            [
+                "lib/web/jquery.js",
+                "lib/web/jquery.js"
             ],
             [
                 "lib/web/knockoutjs",
@@ -564,12 +525,12 @@
                 "pub/opt"
             ],
             [
-                "pub/static.php",
-                "pub/static.php"
-            ],
-            [
                 "pub/static/.htaccess",
                 "pub/static/.htaccess"
+            ],
+            [
+                "pub/static.php",
+                "pub/static.php"
             ],
             [
                 "setup",
@@ -583,12 +544,7 @@
                 "vendor/.htaccess",
                 "vendor/.htaccess"
             ]
-        ],
-        "chmod": [
-            {
-                "mask": "0755",
-                "path": "bin/magento"
-            }
         ]
     }
 }
+

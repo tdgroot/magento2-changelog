@@ -12,6 +12,7 @@ use Composer\Factory;
 use Composer\Installer;
 use Composer\Installer\PackageEvent;
 use Composer\Json\JsonFile;
+use Composer\Package\PackageInterface;
 use Exception;
 use Magento\ComposerRootUpdatePlugin\Utils\Console;
 use Magento\ComposerRootUpdatePlugin\Utils\PackageUtils;
@@ -52,26 +53,52 @@ class WebSetupWizardPluginInstaller
      */
     public function packageEvent($event)
     {
-        $jobs = $event->getRequest()->getJobs();
         $packageName = PluginDefinition::PACKAGE_NAME;
-        foreach ($jobs as $job) {
-            if (key_exists('packageName', $job) && $job['packageName'] === $packageName) {
-                $pkg = $event->getInstalledRepo()->findPackage($packageName, '*');
-                if ($pkg !== null) {
-                    $version = $pkg->getPrettyVersion();
-                    try {
-                        $composer = $event->getComposer();
-                        $this->updateSetupWizardPlugin(
-                            $composer,
-                            $composer->getConfig()->getConfigSource()->getName(),
-                            $version
-                        );
-                    } catch (Exception $e) {
-                        $this->console->error("Web Setup Wizard installation of \"$packageName: $version\" failed", $e);
+        $composerMajorVersion = explode('.', Composer::VERSION)[0];
+        if ($composerMajorVersion == '1') {
+            $jobs = $event->getRequest()->getJobs();
+            foreach ($jobs as $job) {
+                if (key_exists('packageName', $job) && $job['packageName'] === $packageName) {
+                    $pkg = $event->getInstalledRepo()->findPackage($packageName, '*');
+                    if ($pkg !== null) {
+                        $this->processEvent($pkg, $event);
+                        break;
                     }
-                    break;
                 }
             }
+        } elseif ($composerMajorVersion == '2') {
+            if (strpos($event->getOperation()->show(false), $packageName) !== false) {
+                $pkg = $event->getLocalRepo()->findPackage($packageName, '*');
+                if ($pkg !== null) {
+                    $this->processEvent($pkg, $event);
+                }
+            }
+        } else {
+            $this->console->error(
+                "Web Setup Wizard installation of \"$packageName\" failed; unrecognized composer plugin API version"
+            );
+        }
+    }
+
+    /**
+     * Helper function to attempt to run updateSetupWizardPlugin when an appropriate PackageEvent is fired
+     *
+     * @param $pkg PackageInterface
+     * @param $event PackageEvent
+     */
+    public function processEvent($pkg, $event)
+    {
+        $packageName = PluginDefinition::PACKAGE_NAME;
+        $version = $pkg->getPrettyVersion();
+        try {
+            $composer = $event->getComposer();
+            $this->updateSetupWizardPlugin(
+                $composer,
+                $composer->getConfig()->getConfigSource()->getName(),
+                $version
+            );
+        } catch (Exception $e) {
+            $this->console->error("Web Setup Wizard installation of \"$packageName: $version\" failed", $e);
         }
     }
 
@@ -102,7 +129,7 @@ class WebSetupWizardPluginInstaller
                 try {
                     $this->console->log(
                         "Checking for \"$packageName: $version\" for the Web Setup Wizard...",
-                        Console::VERBOSE
+                        Console::VERY_VERBOSE
                     );
                     $this->updateSetupWizardPlugin($composer, $path, $version);
                 } catch (Exception $e) {
@@ -125,6 +152,8 @@ class WebSetupWizardPluginInstaller
     /**
      * Update the plugin installation inside the ./var directory used by the Web Setup Wizard
      *
+     * Does not install the plugin inside var if on a cloud installation
+     *
      * @param Composer $composer
      * @param string $filePath
      * @param string $pluginVersion
@@ -134,6 +163,14 @@ class WebSetupWizardPluginInstaller
     public function updateSetupWizardPlugin($composer, $filePath, $pluginVersion)
     {
         $packageName = PluginDefinition::PACKAGE_NAME;
+
+        if ($this->pkgUtils->findRequire($composer, PackageUtils::CLOUD_METAPACKAGE) !== false) {
+            $this->console->log(
+                "Cloud installation detected, Not installing $packageName for the Web Setup Wizard",
+                Console::VERBOSE
+            );
+            return false;
+        }
 
         // If in ./var already or Magento or the plugin is missing from composer.json, do not install in var
         if (!preg_match('/\/composer\.json$/', $filePath) ||
@@ -170,7 +207,6 @@ class WebSetupWizardPluginInstaller
 
         $this->console->info("Installing \"$packageName: $pluginVersion\" for the Web Setup Wizard");
 
-        $exception = null;
         $tmpDir = null;
         try {
             $tmpDir = $this->getTempDir($var, $packageName, $pluginVersion);
@@ -187,14 +223,8 @@ class WebSetupWizardPluginInstaller
             $install->run();
 
             $this->copyAndReplace("$tmpDir/vendor", "$var/vendor");
-        } catch (Exception $e) {
-            $exception = $e;
-        }
-
-        $this->deletePath($tmpDir);
-
-        if ($exception !== null) {
-            throw $exception;
+        } finally {
+            $this->deletePath($tmpDir);
         }
 
         return true;

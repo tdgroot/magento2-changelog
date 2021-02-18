@@ -6,7 +6,7 @@
         "OSL-3.0",
         "AFL-3.0"
     ],
-    "version": "2.4.1",
+    "version": "2.4.1-p1",
     "require": {
         "magento/magento-composer-installer": "*",
         "php": "~7.3.0||~7.4.0",
@@ -495,6 +495,10 @@
             [
                 "pub/media/customer/.htaccess",
                 "pub/media/customer/.htaccess"
+            ],
+            [
+                "pub/media/customer_address",
+                "pub/media/customer_address"
             ],
             [
                 "pub/media/downloadable/.htaccess",

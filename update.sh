@@ -23,6 +23,6 @@ rm -rf .github app/code app/design app/i18n dev generated pub/static var vendor 
 cd -
 
 # Remove tests, it clogs up the diff and Magento will remove it from the default product anyways.
-rm -r Magento/*/Test Magento/framework/*/Test
+rm -r Magento/*/Test Magento/framework/*/Test Magento/magento2-base/setup/src/Magento/Setup/Test
 
 # php rename-directories.php

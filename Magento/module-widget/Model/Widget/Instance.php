@@ -502,7 +502,6 @@ class Instance extends \Magento\Framework\Model\AbstractModel
      * Add config data from theme config xml.
      *
      * @param string $configFile
-     * @return void
      */
     private function addThemeWidgetConfig(string $configFile): void
     {

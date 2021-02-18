@@ -61,10 +61,10 @@ class Download extends ExportController implements HttpGetActionInterface
         $resultRedirect = $this->resultRedirectFactory->create();
         $resultRedirect->setPath('adminhtml/export/index');
         $fileName = $this->getRequest()->getParam('filename');
-        $exportDirectory = $this->filesystem->getDirectoryRead(DirectoryList::VAR_EXPORT);
+        $exportDirectory = $this->filesystem->getDirectoryRead(DirectoryList::VAR_IMPORT_EXPORT);
 
         try {
-            $fileExist = $exportDirectory->isExist($fileName);
+            $fileExist = $exportDirectory->isExist('export/' . $fileName);
         } catch (Throwable $e) {
             $fileExist = false;
         }
@@ -77,12 +77,12 @@ class Download extends ExportController implements HttpGetActionInterface
 
         try {
             $path = 'export/' . $fileName;
-            $directory = $this->filesystem->getDirectoryRead(DirectoryList::VAR_DIR);
+            $directory = $this->filesystem->getDirectoryRead(DirectoryList::VAR_IMPORT_EXPORT);
             if ($directory->isFile($path)) {
                 return $this->fileFactory->create(
                     $path,
                     $directory->readFile($path),
-                    DirectoryList::VAR_DIR
+                    DirectoryList::VAR_IMPORT_EXPORT
                 );
             }
             $this->messageManager->addErrorMessage(__('%1 is not a valid file', $fileName));

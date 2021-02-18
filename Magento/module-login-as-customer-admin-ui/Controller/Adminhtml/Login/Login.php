@@ -11,8 +11,9 @@ use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
 use Magento\Backend\Model\Auth\Session;
 use Magento\Customer\Api\CustomerRepositoryInterface;
-use Magento\Customer\Model\Config\Share;
 use Magento\Framework\App\Action\HttpPostActionInterface;
+use Magento\Customer\Model\Config\Share;
+use Magento\Framework\App\Action\HttpGetActionInterface;
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Controller\Result\Json as JsonResult;
 use Magento\Framework\Controller\ResultFactory;
@@ -121,8 +122,8 @@ class Login extends Action implements HttpPostActionInterface
      * @param SaveAuthenticationDataInterface $saveAuthenticationData
      * @param DeleteAuthenticationDataForUserInterface $deleteAuthenticationDataForUser
      * @param Url $url
-     * @param Share $share
-     * @param ManageStoreCookie $manageStoreCookie
+     * @param Share|null $share
+     * @param ManageStoreCookie|null $manageStoreCookie
      * @param SetLoggedAsCustomerCustomerIdInterface|null $setLoggedAsCustomerCustomerId
      * @param IsLoginAsCustomerEnabledForCustomerInterface|null $isLoginAsCustomerEnabled
      * @param GenerateAuthenticationSecretInterface|null $generateAuthenticationSecret
@@ -199,7 +200,7 @@ class Login extends Action implements HttpPostActionInterface
         if ($this->config->isStoreManualChoiceEnabled()) {
             $storeId = (int)$this->_request->getParam('store_id');
             if (empty($storeId)) {
-                $messages[] = __('Please select a Store to login in.');
+                $messages[] = __('Please select a Store View to login in.');
                 return $this->prepareJsonResult($messages);
             }
         } elseif ($this->share->isGlobalScope()) {

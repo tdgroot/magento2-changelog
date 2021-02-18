@@ -6,13 +6,13 @@
         "OSL-3.0",
         "AFL-3.0"
     ],
-    "version": "2.4.1-p1",
+    "version": "2.4.2",
     "require": {
         "magento/magento-composer-installer": "*",
         "php": "~7.3.0||~7.4.0",
         "ext-intl": "*",
         "ext-mbstring": "*",
-        "composer/composer": "^1.9",
+        "composer/composer": "^1.9 || ^2.0",
         "laminas/laminas-code": "~3.4.1",
         "laminas/laminas-config": "^2.6.0",
         "laminas/laminas-console": "^2.6.0",
@@ -309,10 +309,6 @@
                 "grunt-config.json.sample"
             ],
             [
-                "index.php",
-                "index.php"
-            ],
-            [
                 "lib/.htaccess",
                 "lib/.htaccess"
             ],
@@ -497,16 +493,16 @@
                 "pub/media/customer/.htaccess"
             ],
             [
-                "pub/media/customer_address",
-                "pub/media/customer_address"
-            ],
-            [
                 "pub/media/downloadable/.htaccess",
                 "pub/media/downloadable/.htaccess"
             ],
             [
                 "pub/media/import",
                 "pub/media/import"
+            ],
+            [
+                "pub/media/sitemap",
+                "pub/media/sitemap"
             ],
             [
                 "pub/media/theme_customization/.htaccess",

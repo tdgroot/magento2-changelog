@@ -7,7 +7,6 @@ declare(strict_types=1);
 
 namespace Magento\MediaGallery\Model\Directory;
 
-use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Filesystem\File\WriteInterface;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Filesystem;
@@ -29,19 +28,17 @@ class IsExcluded implements IsPathExcludedInterface
      */
     private $filesystem;
 
-    /**
-     * @var WriteInterface
-     */
+    /** @var WriteInterface */
     private $mediaDirectory;
 
     /**
      * @param ExcludedPatternsConfigInterface $config
-     * @param Filesystem|null $filesystem
+     * @param Filesystem $filesystem
      */
-    public function __construct(ExcludedPatternsConfigInterface $config, Filesystem $filesystem = null)
+    public function __construct(ExcludedPatternsConfigInterface $config, Filesystem $filesystem)
     {
         $this->config = $config;
-        $this->filesystem = $filesystem ?: ObjectManager::getInstance()->get(Filesystem::class);
+        $this->filesystem = $filesystem;
         $this->mediaDirectory = $this->filesystem->getDirectoryWrite(DirectoryList::MEDIA);
     }
 

@@ -4,11 +4,11 @@
     "require": {
         "php": "~7.3.0||~7.4.0",
         "magento/framework": "*",
-        "magento/module-adobe-ims": "2.1.*",
-        "magento/module-adobe-ims-api": "2.1.*",
-        "magento/module-adobe-stock-asset-api": "1.2.*",
-        "magento/module-adobe-stock-image-api": "1.2.*",
-        "magento/module-adobe-stock-client-api": "2.0.*",
+        "magento/module-adobe-ims": "*",
+        "magento/module-adobe-ims-api": "*",
+        "magento/module-adobe-stock-asset-api": "2.0.*",
+        "magento/module-adobe-stock-image-api": "1.3.*",
+        "magento/module-adobe-stock-client-api": "2.1.*",
         "magento/module-backend": "*",
         "magento/module-ui": "*",
         "magento/module-media-gallery-ui": "*",
@@ -30,5 +30,5 @@
             "Magento\\AdobeStockImageAdminUi\\": ""
         }
     },
-    "version": "1.2.0"
+    "version": "1.3.0"
 }

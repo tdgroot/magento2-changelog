@@ -9,11 +9,10 @@
     "config": {
         "sort-packages": true
     },
-    "version": "100.4.1-p1",
+    "version": "100.4.2",
     "require": {
         "php": "~7.3.0||~7.4.0",
         "magento/framework": "103.0.*",
-        "magento/module-authorization": "100.4.*",
         "magento/module-captcha": "100.4.*",
         "magento/module-catalog": "104.0.*",
         "magento/module-catalog-inventory": "100.4.*",
@@ -32,7 +31,8 @@
         "magento/module-store": "101.1.*",
         "magento/module-tax": "100.4.*",
         "magento/module-theme": "101.1.*",
-        "magento/module-ui": "101.2.*"
+        "magento/module-ui": "101.2.*",
+        "magento/module-authorization": "100.4.*"
     },
     "suggest": {
         "magento/module-cookie": "100.4.*"

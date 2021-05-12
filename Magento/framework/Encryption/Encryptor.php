@@ -226,8 +226,8 @@ class Encryptor implements EncryptorInterface
             if ($version === self::HASH_VERSION_ARGON2ID13_AGNOSTIC) {
                 $version = implode('_', [self::HASH_VERSION_ARGON2ID13_AGNOSTIC, $seedBytes, $opsLimit, $memLimit]);
             }
-
             //phpcs:enable PHPCompatibility.Constants.NewConstants
+
             $hash = $this->getArgonHash($password, $seedBytes, $opsLimit, $memLimit, $salt);
         } else {
             $hash = $this->generateSimpleHash($salt . $password, (int)$version);
@@ -591,6 +591,7 @@ class Encryptor implements EncryptorInterface
         string $salt
     ): string {
         //phpcs:disable PHPCompatibility.Constants.NewConstants
+        //phpcs:disable PHPCompatibility.FunctionUse.NewFunctions
         if (strlen($salt) < SODIUM_CRYPTO_PWHASH_SALTBYTES) {
             $salt = str_pad($salt, SODIUM_CRYPTO_PWHASH_SALTBYTES, $salt);
         } elseif (strlen($salt) > SODIUM_CRYPTO_PWHASH_SALTBYTES) {
@@ -598,7 +599,6 @@ class Encryptor implements EncryptorInterface
         }
 
         return bin2hex(
-        //phpcs:disable PHPCompatibility.FunctionUse.NewFunctions
             sodium_crypto_pwhash(
                 $seedBytes,
                 $data,
@@ -608,6 +608,7 @@ class Encryptor implements EncryptorInterface
                 SODIUM_CRYPTO_PWHASH_ALG_ARGON2ID13
             )
         );
+        //phpcs:enable PHPCompatibility.FunctionUse.NewFunctions
         //phpcs:enable PHPCompatibility.Constants.NewConstants
     }
 }

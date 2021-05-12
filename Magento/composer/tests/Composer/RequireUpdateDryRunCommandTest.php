@@ -7,16 +7,17 @@
 use Magento\Composer\MagentoComposerApplication;
 use Magento\Composer\InfoCommand;
 use Magento\Composer\RequireUpdateDryRunCommand;
+use PHPUnit\Framework\MockObject\MockObject;
 
 class RequireUpdateDryRunCommandTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var MagentoComposerApplication|\PHPUnit_Framework_MockObject_MockObject
+     * @var MagentoComposerApplication|MockObject
      */
     protected $application;
 
     /**
-     * @var InfoCommand|\PHPUnit_Framework_MockObject_MockObject
+     * @var InfoCommand|MockObject
      */
     protected $infoCommand;
 
@@ -62,7 +63,7 @@ Read <https://getcomposer.org/doc/articles/troubleshooting.md> for further commo
         ]
     ];
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->application = $this->createMock(\Magento\Composer\MagentoComposerApplication::class);
         $this->infoCommand = $this->createMock(\Magento\Composer\InfoCommand::class);
@@ -79,15 +80,12 @@ Read <https://getcomposer.org/doc/articles/troubleshooting.md> for further commo
         $this->requireUpdateDryRunCommand->run([], '');
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage
-     */
     public function testRunException()
     {
-        $this->application->expects($this->at(1))
+        $this->application->expects($this->once())
             ->method('runComposerCommand')
             ->willThrowException(new \RuntimeException($this->errorMessage));
+        $this->expectException(\RuntimeException::class);
         $this->infoCommand->expects($this->once())->method('run')->willReturn($this->packageInfo);
         $this->requireUpdateDryRunCommand->run(['3rdp/e 1.2.0'], '');
     }

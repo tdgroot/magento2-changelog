@@ -7,8 +7,8 @@ declare(strict_types=1);
 
 namespace Magento\InventoryComposerInstaller;
 
-use Composer\Package\Package;
 use Composer\IO\IOInterface;
+use Composer\Package\PackageInterface;
 
 class InventoryModuleDeployment
 {
@@ -24,7 +24,10 @@ class InventoryModuleDeployment
         $this->io = $io;
     }
 
-    public function deploy(Package $package): void
+    /**
+     * @param PackageInterface $package
+     */
+    public function deploy(PackageInterface $package): void
     {
         if ($package->getType() !== 'magento2-module') {
             return;

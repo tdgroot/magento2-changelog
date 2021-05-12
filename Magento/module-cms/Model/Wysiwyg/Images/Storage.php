@@ -554,6 +554,7 @@ class Storage extends \Magento\Framework\DataObject
                 __('We can\'t upload the file to current folder right now. Please try another folder.')
             );
         }
+
         /** @var \Magento\MediaStorage\Model\File\Uploader $uploader */
         $uploader = $this->_uploaderFactory->create(['fileId' => 'image']);
         $allowed = $this->getAllowedExtensions($type);

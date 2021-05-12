@@ -46,7 +46,7 @@ class WishlistData implements ArgumentInterface
      * @param int $wishlistId
      * @return string
      */
-    public function getListUrl(int $wishlistId = null): string
+    public function getListUrl($wishlistId = null): string
     {
         return $this->helperData->getListUrl($wishlistId);
     }

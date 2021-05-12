@@ -15,7 +15,7 @@ mkdir Magento
 mv out/vendor/magento/* Magento/
 
 # Remove packages already versoned on Github
-rm -r Magento/magento-coding-standard Magento/magento-composer-installer Magento/magento2-functional-testing-framework
+rm -r Magento/magento-coding-standard Magento/magento-composer-installer Magento/composer-root-update-plugin Magento/magento2-functional-testing-framework
 
 # Cleanup magento2-base, most of this is irrelevant
 cd Magento/magento2-base

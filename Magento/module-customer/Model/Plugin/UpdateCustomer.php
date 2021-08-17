@@ -44,7 +44,6 @@ class UpdateCustomer
         ?string $passwordHash = null
     ): array {
         $customerId = $this->request->getParam('customerId');
-
         $bodyParams = $this->request->getBodyParams();
         if (!isset($bodyParams['customer']['Id']) && $customerId) {
             $customer = $this->getUpdatedCustomer($customerRepository->getById($customerId), $customer);

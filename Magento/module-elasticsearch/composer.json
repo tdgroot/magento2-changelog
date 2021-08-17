@@ -6,7 +6,7 @@
         "OSL-3.0",
         "AFL-3.0"
     ],
-    "version": "101.0.2",
+    "version": "101.0.3",
     "require": {
         "php": "~7.3.0||~7.4.0",
         "magento/module-advanced-search": "100.4.*",
@@ -18,7 +18,7 @@
         "magento/module-store": "101.1.*",
         "magento/module-catalog-inventory": "100.4.*",
         "magento/framework": "103.0.*",
-        "elasticsearch/elasticsearch": "~7.7.0"
+        "elasticsearch/elasticsearch": "~7.11.0"
     },
     "suggest": {
         "magento/module-config": "101.2.*"

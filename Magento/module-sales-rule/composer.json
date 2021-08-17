@@ -9,10 +9,11 @@
     "config": {
         "sort-packages": true
     },
-    "version": "101.2.2",
+    "version": "101.2.3",
     "require": {
         "php": "~7.3.0||~7.4.0",
         "magento/framework": "103.0.*",
+        "magento/framework-bulk": "101.0.*",
         "magento/module-backend": "102.0.*",
         "magento/module-catalog": "104.0.*",
         "magento/module-catalog-rule": "101.2.*",
@@ -31,7 +32,8 @@
         "magento/module-widget": "101.2.*",
         "magento/module-captcha": "100.4.*",
         "magento/module-checkout": "100.4.*",
-        "magento/module-authorization": "100.4.*"
+        "magento/module-authorization": "100.4.*",
+        "magento/module-asynchronous-operations": "100.4.*"
     },
     "suggest": {
         "magento/module-sales-rule-sample-data": "Sample Data version: 100.4.*"

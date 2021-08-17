@@ -1,0 +1,26 @@
+{
+    "name": "magento/module-cms-page-builder-analytics",
+    "description": "CMS Page Builder Analytics module",
+    "config": {
+        "sort-packages": true
+    },
+    "require": {
+        "magento/module-page-builder-analytics": "1.6.*",
+        "magento/module-cms": "*",
+        "magento/framework": "~103.0.3",
+        "php": "~7.3.0||~7.4.0"
+    },
+    "type": "magento2-module",
+    "license": [
+        "proprietary"
+    ],
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "Magento\\CmsPageBuilderAnalytics\\": ""
+        }
+    },
+    "version": "1.6.1"
+}

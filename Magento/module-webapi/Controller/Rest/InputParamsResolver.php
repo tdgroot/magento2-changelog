@@ -9,6 +9,7 @@ namespace Magento\Webapi\Controller\Rest;
 use Magento\Framework\Api\SimpleDataObjectConverter;
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Reflection\MethodsMap;
+use Magento\Framework\Webapi\Exception;
 use Magento\Framework\Webapi\ServiceInputProcessor;
 use Magento\Framework\Webapi\Rest\Request as RestRequest;
 use Magento\Webapi\Controller\Rest\Router\Route;
@@ -84,7 +85,7 @@ class InputParamsResolver
      * Process and resolve input parameters
      *
      * @return array
-     * @throws \Magento\Framework\Webapi\Exception
+     * @throws Exception
      */
     public function resolve()
     {

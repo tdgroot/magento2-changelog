@@ -20,10 +20,10 @@ rm -r Magento/composer-root-update-plugin Magento/magento-coding-standard Magent
 # Cleanup magento2-base, most of this is irrelevant
 cd Magento/magento2-base
 rm -rf .github app/code app/design app/i18n dev generated pub/static var vendor *.md *.txt *.sample .*.sample
-rm -rf Magento/*/composer.json
 cd -
 
 # Remove tests, it clogs up the diff and Magento will remove it from the default product anyways.
 rm -r Magento/*/Test Magento/framework/*/Test Magento/magento2-base/setup/src/Magento/Setup/Test
+rm Magento/*/composer.json
 
 # php rename-directories.php
